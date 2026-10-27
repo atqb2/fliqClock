@@ -1,0 +1,1686 @@
+/* ==========================================================================
+   FLIQLO MODERN WEB FLIP CLOCK - STYLESHEET
+   ========================================================================== */
+
+:root {
+  /* Renk Paleti - Klasik Fliqlo Siyah Teması */
+  --bg-color: #0e0e10;
+  --card-bg: #1c1c1f;
+  --card-bg-top: #232327;
+  --card-bg-bottom: #18181a;
+  --card-text: #f3f3f5;
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 8px 16px rgba(0, 0, 0, 0.5);
+  
+  --divider-color: #0c0c0e;
+  --divider-highlight: rgba(255, 255, 255, 0.08);
+  --hinge-color: #121214;
+  --hinge-border: rgba(255, 255, 255, 0.08);
+  
+  --ampm-color: #8c8c94;
+  --date-color: #a0a0aa;
+  
+  --ui-bg: rgba(26, 26, 30, 0.85);
+  --ui-border: rgba(255, 255, 255, 0.12);
+  --ui-text: #e4e4e7;
+  --ui-text-muted: #9ba1a6;
+  --ui-accent: #3b82f6;
+  --ui-accent-hover: #2563eb;
+  
+  /* Tipografi & Boyutlandırma */
+  --font-digits: "Inter", "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-scale: 1;
+  
+  /* Kart Ölçüleri (Duyarlı ve Ayarlanabilir) */
+  --scale: 1;
+  --base-width: clamp(130px, 25vw, 340px);
+  --card-width: calc(var(--base-width) * var(--scale));
+  --card-height: calc(var(--card-width) * 1.15);
+  --card-radius: calc(var(--card-width) * 0.085);
+  --card-font-size: calc(var(--card-height) * 0.72 * var(--font-scale, 1));
+  
+  /* Animasyon Süresi */
+  --flip-duration: 0.55s;
+}
+
+/* --------------------------------------------------------------------------
+   TEMALAR
+   -------------------------------------------------------------------------- */
+
+/* Minimal Açık Tema */
+body.theme-fliqlo-light {
+  --bg-color: #e9ecef;
+  --card-bg: #fdfdfd;
+  --card-bg-top: #ffffff;
+  --card-bg-bottom: #f2f4f7;
+  --card-text: #191c20;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.06);
+  --divider-color: #d0d4dc;
+  --divider-highlight: rgba(255, 255, 255, 0.9);
+  --hinge-color: #c4c8d0;
+  --hinge-border: rgba(0, 0, 0, 0.1);
+  --ampm-color: #64748b;
+  --date-color: #475569;
+  --ui-bg: rgba(255, 255, 255, 0.9);
+  --ui-border: rgba(0, 0, 0, 0.12);
+  --ui-text: #1e293b;
+  --ui-text-muted: #64748b;
+  --ui-accent: #2563eb;
+}
+
+/* Retro Amber Tema */
+body.theme-fliqlo-amber {
+  --bg-color: #120c04;
+  --card-bg: #21160a;
+  --card-bg-top: #291c0e;
+  --card-bg-bottom: #1b1106;
+  --card-text: #ffaa22;
+  --card-border: rgba(255, 170, 34, 0.15);
+  --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 170, 34, 0.12);
+  --divider-color: #0d0702;
+  --divider-highlight: rgba(255, 170, 34, 0.1);
+  --hinge-color: #150d05;
+  --hinge-border: rgba(255, 170, 34, 0.2);
+  --ampm-color: #d97706;
+  --date-color: #f59e0b;
+  --ui-bg: rgba(26, 17, 7, 0.9);
+  --ui-border: rgba(255, 170, 34, 0.2);
+  --ui-text: #fef3c7;
+  --ui-text-muted: #d97706;
+  --ui-accent: #f59e0b;
+}
+
+/* Matrix Neon Tema */
+body.theme-fliqlo-neon {
+  --bg-color: #040d07;
+  --card-bg: #091a0e;
+  --card-bg-top: #0d2414;
+  --card-bg-bottom: #06140b;
+  --card-text: #22c55e;
+  --card-border: rgba(34, 197, 94, 0.2);
+  --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(34, 197, 94, 0.15);
+  --divider-color: #020804;
+  --divider-highlight: rgba(34, 197, 94, 0.15);
+  --hinge-color: #051208;
+  --hinge-border: rgba(34, 197, 94, 0.25);
+  --ampm-color: #16a34a;
+  --date-color: #4ade80;
+  --ui-bg: rgba(9, 26, 14, 0.9);
+  --ui-border: rgba(34, 197, 94, 0.25);
+  --ui-text: #dcfce7;
+  --ui-text-muted: #22c55e;
+  --ui-accent: #22c55e;
+}
+
+/* Nord Kutup Tema */
+body.theme-fliqlo-nord {
+  --bg-color: #1a1e29;
+  --card-bg: #242938;
+  --card-bg-top: #2c3244;
+  --card-bg-bottom: #1f2330;
+  --card-text: #eceff4;
+  --card-border: rgba(236, 239, 244, 0.08);
+  --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 8px 24px rgba(14, 17, 23, 0.4);
+  --divider-color: #151821;
+  --divider-highlight: rgba(136, 192, 208, 0.15);
+  --hinge-color: #181c26;
+  --hinge-border: rgba(136, 192, 208, 0.2);
+  --ampm-color: #88c0d0;
+  --date-color: #81a1c1;
+  --ui-bg: rgba(36, 41, 56, 0.9);
+  --ui-border: rgba(136, 192, 208, 0.2);
+  --ui-text: #eceff4;
+  --ui-text-muted: #88c0d0;
+  --ui-accent: #88c0d0;
+}
+
+/* --------------------------------------------------------------------------
+   YAZI TİPLERİ (FONTS)
+   -------------------------------------------------------------------------- */
+body.font-inter {
+  --font-digits: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-scale: 1;
+}
+
+body.font-bebas {
+  --font-digits: "Bebas Neue", "Oswald", sans-serif;
+  --font-scale: 1.15;
+}
+
+body.font-oswald {
+  --font-digits: "Oswald", sans-serif;
+  --font-scale: 1.05;
+}
+
+body.font-mono {
+  --font-digits: "JetBrains Mono", monospace;
+  --font-scale: 0.94;
+}
+
+body.font-orbitron {
+  --font-digits: "Orbitron", sans-serif;
+  --font-scale: 0.88;
+}
+
+body.font-playfair {
+  --font-digits: "Playfair Display", Georgia, serif;
+  --font-scale: 0.96;
+}
+
+body.font-space {
+  --font-digits: "Space Grotesk", sans-serif;
+  --font-scale: 1.0;
+}
+
+body.font-syne {
+  --font-digits: "Syne", sans-serif;
+  --font-scale: 1.02;
+}
+
+/* --------------------------------------------------------------------------
+   TEMEL DÜZEN VE RESET
+   -------------------------------------------------------------------------- */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  min-height: -webkit-fill-available;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: var(--font-ui);
+  background-color: var(--bg-color);
+  color: var(--card-text);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Screensaver Boşta Kalma (Idle) Durumu */
+body.idle {
+  cursor: none;
+}
+
+body.idle .floating-controls,
+body.idle .screensaver-hint,
+body.idle .mode-navigation,
+body.idle .mode-action-bar,
+body.idle .timer-presets,
+body.idle .laps-container {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+body.idle .mode-navigation {
+  transform: translate(-50%, -10px);
+}
+
+body.idle.hide-date-on-idle .date-display {
+  opacity: 0.15;
+}
+
+/* --------------------------------------------------------------------------
+   SAHNE & SAAT KONTEYNERİ
+   -------------------------------------------------------------------------- */
+
+.clock-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Tarih Gösterimi */
+.date-display {
+  font-size: clamp(14px, 2.2vw, 22px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--date-color);
+  margin-bottom: clamp(16px, 3vh, 36px);
+  text-transform: uppercase;
+  transition: opacity 0.5s ease, color 0.4s ease;
+  opacity: 0.85;
+}
+
+.date-display.hidden {
+  display: none;
+}
+
+/* Saatler Konteyneri */
+.clock-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 2.8vw, 36px);
+  perspective: 2000px;
+  transform-style: preserve-3d;
+  transition: gap 0.3s ease;
+}
+
+/* --------------------------------------------------------------------------
+   FLIP UNIT & KART YAPISI (3D SPLIT-FLAP)
+   -------------------------------------------------------------------------- */
+
+.flip-unit {
+  position: relative;
+  width: var(--card-width);
+  height: var(--card-height);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  transform-style: preserve-3d;
+}
+
+/* Saniye Kartı Toggle Davranışı */
+.flip-unit-seconds {
+  display: block;
+}
+
+.flip-unit-seconds.hidden {
+  display: none;
+}
+
+/* AM / PM Rozeti */
+.ampm-badge {
+  position: absolute;
+  bottom: calc(var(--card-height) * 0.08);
+  left: calc(var(--card-width) * 0.09);
+  font-size: calc(var(--card-height) * 0.075);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--ampm-color);
+  z-index: 25;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease, color 0.4s ease;
+  pointer-events: none;
+}
+
+.ampm-badge.hidden {
+  display: none;
+}
+
+/* Flip Kart Ana Gövdesi */
+.flip-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+/* Kart Yüzleri ve Kanatlar Ortak Özellikler */
+.card-face,
+.card-flap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Kanatlar sadece animasyon esnasında aktif olsun */
+.card-flap {
+  display: none;
+}
+
+.flip-unit.flipping .card-flap {
+  display: block;
+}
+
+/* Rakam Konumlandırma */
+.digit {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: var(--card-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-digits);
+  font-size: var(--card-font-size);
+  font-weight: 800;
+  line-height: var(--card-height);
+  color: var(--card-text);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Üst Yarılar (Top Faces & Flaps) */
+.card-face.top,
+.card-flap.flap-top {
+  top: 0;
+  border-top-left-radius: var(--card-radius);
+  border-top-right-radius: var(--card-radius);
+  background: linear-gradient(180deg, var(--card-bg-top) 0%, var(--card-bg) 100%);
+  border-top: 1px solid var(--card-border);
+  border-left: 1px solid var(--card-border);
+  border-right: 1px solid var(--card-border);
+  transform-origin: 50% 100%;
+}
+
+.card-face.top .digit,
+.card-flap.flap-top .digit {
+  top: 0;
+}
+
+/* Alt Yarılar (Bottom Faces & Flaps) */
+.card-face.bottom,
+.card-flap.flap-bottom {
+  top: 50%;
+  border-bottom-left-radius: var(--card-radius);
+  border-bottom-right-radius: var(--card-radius);
+  background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg-bottom) 100%);
+  border-bottom: 1px solid var(--card-border);
+  border-left: 1px solid var(--card-border);
+  border-right: 1px solid var(--card-border);
+  transform-origin: 50% 0%;
+}
+
+.card-face.bottom .digit,
+.card-flap.flap-bottom .digit {
+  top: calc(var(--card-height) * -0.5);
+}
+
+/* Katman Sıralaması (Z-Index) */
+.card-face.top {
+  z-index: 1;
+}
+
+.card-face.bottom {
+  z-index: 2;
+}
+
+.card-flap.flap-top {
+  z-index: 4;
+}
+
+.card-flap.flap-bottom {
+  z-index: 3;
+  transform: rotateX(90deg);
+}
+
+/* --------------------------------------------------------------------------
+   MEKANİK DETAYLAR (AYIRICI ÇİZGİ & MENTEŞELER)
+   -------------------------------------------------------------------------- */
+
+.card-divider {
+  position: absolute;
+  top: calc(50% - 1px);
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--divider-color);
+  box-shadow: 0 1px 0 var(--divider-highlight);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.hinge {
+  position: absolute;
+  top: calc(50% - 6px);
+  width: 7px;
+  height: 12px;
+  background-color: var(--hinge-color);
+  border: 1px solid var(--hinge-border);
+  z-index: 22;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.hinge-left {
+  left: -2px;
+}
+
+.hinge-right {
+  right: -2px;
+}
+
+/* Kanat Gölgeleri (Gerçekçi Işıklandırma İçin) */
+.flap-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background var(--flip-duration) linear;
+}
+
+/* --------------------------------------------------------------------------
+   3D FLIP ANİMASYONLARI
+   -------------------------------------------------------------------------- */
+
+.flip-unit.flipping .card-flap.flap-top {
+  animation: flipTopAnim calc(var(--flip-duration) * 0.5) cubic-bezier(0.37, 0, 0.63, 1) forwards;
+}
+
+.flip-unit.flipping .card-flap.flap-top .flap-shadow {
+  animation: shadowTopAnim calc(var(--flip-duration) * 0.5) ease-in forwards;
+}
+
+.flip-unit.flipping .card-flap.flap-bottom {
+  animation: flipBottomAnim calc(var(--flip-duration) * 0.5) cubic-bezier(0.37, 1, 0.63, 1) calc(var(--flip-duration) * 0.5) forwards;
+}
+
+.flip-unit.flipping .card-flap.flap-bottom .flap-shadow {
+  animation: shadowBottomAnim calc(var(--flip-duration) * 0.5) ease-out calc(var(--flip-duration) * 0.5) forwards;
+}
+
+@keyframes flipTopAnim {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes shadowTopAnim {
+  0% {
+    background: rgba(0, 0, 0, 0);
+  }
+  100% {
+    background: rgba(0, 0, 0, 0.65);
+  }
+}
+
+@keyframes flipBottomAnim {
+  0% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes shadowBottomAnim {
+  0% {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  100% {
+    background: rgba(0, 0, 0, 0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   YÜZEN KONTROLLER (FLOATING BAR)
+   -------------------------------------------------------------------------- */
+
+.floating-controls {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ui-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--ui-border);
+  padding: 8px 12px;
+  border-radius: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--ui-text);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* Screensaver İpucu */
+.screensaver-hint {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  font-size: 13px;
+  color: var(--ui-text-muted);
+  background: var(--ui-bg);
+  backdrop-filter: blur(12px);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--ui-border);
+  pointer-events: none;
+  opacity: 0.75;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 90;
+}
+
+.screensaver-hint strong {
+  color: var(--ui-text);
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   AYARLAR PANELİ (MODAL)
+   -------------------------------------------------------------------------- */
+
+.settings-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 150;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.settings-modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.settings-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.94);
+  width: 90%;
+  max-width: 440px;
+  max-height: 85vh;
+  background: var(--ui-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--ui-border);
+  border-radius: 24px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0.3s ease;
+  overflow: hidden;
+}
+
+.settings-panel.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  visibility: visible;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--ui-border);
+}
+
+.settings-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ui-text);
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ui-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: var(--ui-text);
+}
+
+.settings-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Setting Groups */
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setting-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setting-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.setting-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+
+.setting-desc {
+  font-size: 12px;
+  color: var(--ui-text-muted);
+}
+
+/* Segmented Control */
+.segmented-control {
+  display: flex;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--ui-border);
+  gap: 4px;
+}
+
+.segment-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--ui-text-muted);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.segment-btn.active {
+  background: var(--ui-accent);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* iOS Tarzı Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: 0.3s;
+  border-radius: 34px;
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider {
+  background-color: var(--ui-accent);
+}
+
+input:checked + .slider::before {
+  transform: translateX(22px);
+}
+
+/* Range Slider */
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slider-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ui-accent);
+}
+
+.range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  outline: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ui-accent);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Tema Seçici Kartları */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.theme-option:hover {
+  transform: translateY(-2px);
+}
+
+.theme-option.active {
+  border-color: var(--ui-accent);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.theme-preview {
+  width: 100%;
+  height: 36px;
+  border-radius: 6px;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.dark-preview { background: #1c1c1f; border: 1px solid #333; }
+.light-preview { background: #fdfdfd; border: 1px solid #ddd; }
+.amber-preview { background: #21160a; border: 1px solid #ffaa22; }
+.neon-preview { background: #091a0e; border: 1px solid #22c55e; }
+.nord-preview { background: #242938; border: 1px solid #88c0d0; }
+
+.theme-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ui-text);
+  text-align: center;
+}
+
+/* Font Seçici Kartları */
+.font-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
+}
+
+.font-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
+}
+
+.font-option:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.font-option.active {
+  border-color: var(--ui-accent);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.font-sample {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--ui-text);
+  margin-bottom: 2px;
+}
+
+.font-name {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ui-text-muted);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Kısayol Bilgisi */
+.shortcuts-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--ui-text-muted);
+}
+
+.shortcuts-list kbd {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ui-text);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  border: 1px solid var(--ui-border);
+  margin-right: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   ÜST MOD SEÇİCİ NAVİGASYON (CLOCK / STOPWATCH / TIMER)
+   -------------------------------------------------------------------------- */
+
+.mode-navigation {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ui-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--ui-border);
+  padding: 6px 8px;
+  border-radius: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  z-index: 100;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.mode-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: none;
+  color: var(--ui-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-nav-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mode-nav-btn.active {
+  background: var(--ui-accent);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.mode-icon {
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   MOD AKSİYON KONTROLLERİ (KRONOMETRE & ZAMANLAYICI)
+   -------------------------------------------------------------------------- */
+
+.mode-action-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(20px, 3.8vh, 36px);
+  z-index: 20;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mode-action-bar.hidden {
+  display: none;
+}
+
+.action-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.action-group.hidden {
+  display: none;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+}
+
+.action-btn.btn-primary {
+  background: var(--ui-accent);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3), 0 0 15px rgba(59, 130, 246, 0.35);
+}
+
+.action-btn.btn-primary:hover {
+  background: var(--ui-accent-hover, #2563eb);
+}
+
+.action-btn.btn-secondary {
+  opacity: 0.9;
+}
+
+.action-icon {
+  flex-shrink: 0;
+}
+
+.action-icon.hidden {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   ZAMANLAYICI HIZLI PRESET BUTONLARI
+   -------------------------------------------------------------------------- */
+
+.timer-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  max-width: 560px;
+  transition: opacity 0.3s ease;
+}
+
+.timer-presets.hidden {
+  display: none;
+}
+
+.preset-pill {
+  background: var(--ui-bg);
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.18s ease;
+}
+
+.preset-pill:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.preset-pill.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--ui-text);
+  border-color: var(--ui-accent);
+}
+
+/* --------------------------------------------------------------------------
+   KRONOMETRE TUR LİSTESİ (LAPS)
+   -------------------------------------------------------------------------- */
+
+.laps-container {
+  margin-top: 18px;
+  width: 90%;
+  max-width: 380px;
+  max-height: 140px;
+  background: var(--ui-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--ui-border);
+  border-radius: 16px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.laps-container.hidden {
+  display: none;
+}
+
+.laps-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ui-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--ui-border);
+  margin-bottom: 6px;
+}
+
+.laps-clear-btn {
+  background: transparent;
+  border: none;
+  color: var(--ui-text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.laps-clear-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.laps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.lap-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.lap-item:nth-child(1) {
+  color: var(--ui-accent);
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.lap-num {
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   ZAMANLAYICI KURMA MODALI (TIMER SETUP)
+   -------------------------------------------------------------------------- */
+
+.timer-modal {
+  max-width: 420px;
+}
+
+.timer-inputs-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0 15px;
+}
+
+.timer-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.timer-input-group label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ui-text-muted);
+}
+
+.spin-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--ui-border);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.spin-btn {
+  background: transparent;
+  border: none;
+  color: var(--ui-text);
+  font-size: 16px;
+  font-weight: bold;
+  width: 100%;
+  padding: 4px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.spin-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.timer-num-input {
+  width: 64px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  background: transparent;
+  border: none;
+  color: var(--ui-text);
+  font-family: var(--font-digits);
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.timer-num-input::-webkit-outer-spin-button,
+.timer-num-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.timer-input-sep {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ui-text-muted);
+  margin-top: 16px;
+}
+
+.timer-modal-presets {
+  margin: 10px 0 15px;
+}
+
+.modal-presets-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.modal-preset-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modal-preset-btn:hover {
+  background: var(--ui-accent);
+  color: #ffffff;
+  border-color: var(--ui-accent);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: stretch;
+  margin-top: 10px;
+}
+
+.modal-action-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   ZAMANLAYICI ALARM BİLDİRİMİ / OVERLAY
+   -------------------------------------------------------------------------- */
+
+.timer-alarm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulseAlarmBg 1.5s infinite alternate;
+}
+
+.timer-alarm-overlay.hidden {
+  display: none;
+}
+
+.timer-alarm-card {
+  background: var(--ui-bg);
+  border: 2px solid var(--ui-accent);
+  border-radius: 24px;
+  padding: 32px 40px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px var(--ui-accent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 360px;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.alarm-bell-icon {
+  font-size: 52px;
+  animation: bellShake 0.6s infinite ease-in-out;
+}
+
+.alarm-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ui-text);
+}
+
+.alarm-desc {
+  font-size: 14px;
+  color: var(--ui-text-muted);
+}
+
+@keyframes bellShake {
+  0% { transform: rotate(0); }
+  20% { transform: rotate(18deg); }
+  40% { transform: rotate(-18deg); }
+  60% { transform: rotate(12deg); }
+  80% { transform: rotate(-12deg); }
+  100% { transform: rotate(0); }
+}
+
+@keyframes pulseAlarmBg {
+  0% { background: rgba(0, 0, 0, 0.65); }
+  100% { background: rgba(30, 10, 10, 0.85); }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE UYARLAMALAR
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE UYARLAMALAR (TABLET & TELEFON OPTİMİZASYONU)
+   -------------------------------------------------------------------------- */
+
+/* Güvenli Alanlar (iPhone Notch & Dynamic Island) */
+.clock-stage {
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  padding-left: calc(16px + env(safe-area-inset-left, 0px));
+  padding-right: calc(16px + env(safe-area-inset-right, 0px));
+}
+
+.mode-navigation {
+  top: calc(18px + env(safe-area-inset-top, 0px));
+}
+
+.floating-controls {
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  right: calc(20px + env(safe-area-inset-right, 0px));
+}
+
+.screensaver-hint {
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  left: calc(20px + env(safe-area-inset-left, 0px));
+}
+
+/* Kartların her zaman yatay tek satırda kalmasını sağla */
+.clock-container {
+  flex-wrap: nowrap !important;
+}
+
+/* TABLET (iPad, Android Tabletler: 641px - 1024px) */
+@media screen and (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --base-width: clamp(120px, min(26vw, 30vh), 240px);
+  }
+
+  .clock-container {
+    gap: clamp(14px, 2.5vw, 28px);
+  }
+
+  /* 3 kart varsa hafif daralt */
+  .clock-container:has(.flip-unit-seconds:not(.hidden)),
+  body.has-seconds .clock-container {
+    --base-width: clamp(110px, min(23vw, 26vh), 210px);
+    gap: clamp(10px, 2vw, 20px);
+  }
+
+  .mode-nav-btn {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  .action-btn {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+}
+
+/* TELEFON DİKEY (Mobile Portrait: <= 640px) */
+@media screen and (max-width: 640px) and (orientation: portrait) {
+  /* 2 Kartlı Görünüm (Saniyesiz Saat Modu) */
+  :root {
+    --base-width: clamp(115px, min(43vw, 25vh), 180px);
+  }
+
+  .clock-container {
+    gap: clamp(10px, 2.8vw, 18px);
+  }
+
+  /* 3 Kartlı Görünüm (Saniyeli Saat, Kronometre, Zamanlayıcı) */
+  .clock-container:has(.flip-unit-seconds:not(.hidden)),
+  body.has-seconds .clock-container {
+    --base-width: clamp(75px, min(28vw, 17vh), 112px);
+    gap: clamp(6px, 1.8vw, 10px);
+  }
+
+  .date-display {
+    font-size: clamp(12px, 3.4vw, 15px);
+    margin-bottom: 14px;
+  }
+
+  .mode-navigation {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    padding: 4px 6px;
+    gap: 4px;
+  }
+
+  .mode-nav-btn {
+    font-size: 11px;
+    padding: 6px 10px;
+    gap: 4px;
+  }
+
+  .mode-nav-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .mode-action-bar {
+    margin-top: 16px;
+  }
+
+  .action-group {
+    gap: 8px;
+  }
+
+  .action-btn {
+    padding: 9px 16px;
+    font-size: 13px;
+    border-radius: 24px;
+  }
+
+  .timer-presets {
+    gap: 6px;
+    margin-top: 10px;
+    max-width: 320px;
+  }
+
+  .preset-pill {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .laps-container {
+    margin-top: 12px;
+    max-height: 110px;
+    padding: 8px 12px;
+  }
+
+  .floating-controls {
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    padding: 6px 8px;
+    gap: 6px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .screensaver-hint {
+    display: none;
+  }
+
+  .settings-panel {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .timer-modal {
+    width: 95%;
+  }
+
+  .timer-num-input {
+    width: 52px;
+    font-size: 24px;
+  }
+
+  .timer-input-sep {
+    font-size: 24px;
+  }
+}
+
+/* YATAY TELEFON & KOMODİN / STAND SAATİ (Mobile Landscape: max-height <= 520px) */
+@media screen and (max-height: 520px) {
+  :root {
+    /* Yatay modda yükseklik kısıtlıdır; kart boyu ekrana tam oturur */
+    --base-width: clamp(75px, min(26vw, 56vh), 230px);
+  }
+
+  .clock-stage {
+    padding: calc(6px + env(safe-area-inset-top, 0px)) calc(14px + env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) calc(14px + env(safe-area-inset-left, 0px));
+  }
+
+  .clock-container {
+    gap: clamp(8px, 2vw, 20px);
+  }
+
+  .date-display {
+    font-size: 11px;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .mode-navigation {
+    top: calc(6px + env(safe-area-inset-top, 0px));
+    padding: 3px 6px;
+    gap: 3px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  }
+
+  .mode-nav-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    gap: 4px;
+  }
+
+  .mode-nav-btn svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .mode-action-bar {
+    margin-top: 8px;
+  }
+
+  .action-btn {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .timer-presets {
+    margin-top: 6px;
+    gap: 4px;
+  }
+
+  .preset-pill {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .laps-container {
+    position: fixed;
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    top: calc(50px + env(safe-area-inset-top, 0px));
+    margin-top: 0;
+    width: 180px;
+    max-height: 140px;
+    z-index: 60;
+  }
+
+  .floating-controls {
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    right: calc(10px + env(safe-area-inset-right, 0px));
+    padding: 4px 6px;
+    gap: 4px;
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .icon-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .screensaver-hint {
+    display: none;
+  }
+
+  .settings-panel {
+    max-height: 94vh;
+  }
+}

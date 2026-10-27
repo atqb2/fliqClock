@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Fliqlo - Modern Web Flip Clock</title>
+  
+  <!-- PWA & Mobil Uyumluluk -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fliqlo">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0e0e10">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.svg">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@700;800;900&family=JetBrains+Mono:wght@700;800&family=Orbitron:wght@700;800;900&family=Oswald:wght@600;700&family=Playfair+Display:wght@700;800;900&family=Space+Grotesk:wght@700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+</head>
+<body class="theme-fliqlo-dark" id="body">
+  <!-- Üst Mod Seçici (Saat / Kronometre / Zamanlayıcı) -->
+  <nav class="mode-navigation" id="modeNavigation" aria-label="Saat Modları">
+    <button type="button" class="mode-nav-btn active" data-mode="clock" id="modeBtnClock" title="Saat Modu (1)">
+      <svg class="mode-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+      </svg>
+      <span>Saat</span>
+    </button>
+    <button type="button" class="mode-nav-btn" data-mode="stopwatch" id="modeBtnStopwatch" title="Kronometre Modu (2)">
+      <svg class="mode-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+        <path d="M19.03 7.39l1.42-1.42c-.45-.51-.94-.99-1.47-1.42l-1.42 1.42C15.99 4.74 14.08 4 12 4c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10c0-2.08-.74-3.99-1.97-5.61zM13 15h-2V8h2v7zm-1-13h-2v2h2V2z"/>
+      </svg>
+      <span>Kronometre</span>
+    </button>
+    <button type="button" class="mode-nav-btn" data-mode="timer" id="modeBtnTimer" title="Zamanlayıcı Modu (3)">
+      <svg class="mode-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+        <path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9 0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-.31C18.16 20.67 21 17.17 21 13c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+      </svg>
+      <span>Zamanlayıcı</span>
+    </button>
+  </nav>
+
+  <!-- Ana Saat Sahnesi -->
+  <main class="clock-stage" id="clockStage">
+    <!-- Tarih & Durum Çubuğu -->
+    <header class="date-display" id="dateDisplay" aria-live="polite">
+      <span class="date-day-name" id="dateDayName">Pazartesi</span>,
+      <span class="date-full" id="dateFull">14 Eylül 2026</span>
+    </header>
+
+    <!-- Flip Clock Gövdesi -->
+    <div class="clock-container" id="clockContainer">
+      <!-- SAAT KARTI -->
+      <div class="flip-unit" id="unitHours" data-label="Hours">
+        <div class="ampm-badge" id="ampmBadge">PM</div>
+        <div class="flip-card">
+          <!-- Statik Üst Katman -->
+          <div class="card-face top">
+            <span class="digit">12</span>
+          </div>
+          <!-- Statik Alt Katman -->
+          <div class="card-face bottom">
+            <span class="digit">12</span>
+          </div>
+          <!-- Dönen Üst Kanat (Flip Down) -->
+          <div class="card-flap flap-top">
+            <span class="digit">12</span>
+            <div class="flap-shadow"></div>
+          </div>
+          <!-- Dönen Alt Kanat (Reveal Up) -->
+          <div class="card-flap flap-bottom">
+            <span class="digit">12</span>
+            <div class="flap-shadow"></div>
+          </div>
+          <!-- Mekanik Detaylar -->
+          <div class="card-divider"></div>
+          <div class="hinge hinge-left"></div>
+          <div class="hinge hinge-right"></div>
+        </div>
+      </div>
+
+      <!-- DAKİKA KARTI -->
+      <div class="flip-unit" id="unitMinutes" data-label="Minutes">
+        <div class="flip-card">
+          <div class="card-face top">
+            <span class="digit">00</span>
+          </div>
+          <div class="card-face bottom">
+            <span class="digit">00</span>
+          </div>
+          <div class="card-flap flap-top">
+            <span class="digit">00</span>
+            <div class="flap-shadow"></div>
+          </div>
+          <div class="card-flap flap-bottom">
+            <span class="digit">00</span>
+            <div class="flap-shadow"></div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="hinge hinge-left"></div>
+          <div class="hinge hinge-right"></div>
+        </div>
+      </div>
+
+      <!-- SANİYE KARTI (Opsiyonel / Toggle Edilebilir) -->
+      <div class="flip-unit flip-unit-seconds" id="unitSeconds" data-label="Seconds">
+        <div class="flip-card">
+          <div class="card-face top">
+            <span class="digit">00</span>
+          </div>
+          <div class="card-face bottom">
+            <span class="digit">00</span>
+          </div>
+          <div class="card-flap flap-top">
+            <span class="digit">00</span>
+            <div class="flap-shadow"></div>
+          </div>
+          <div class="card-flap flap-bottom">
+            <span class="digit">00</span>
+            <div class="flap-shadow"></div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="hinge hinge-left"></div>
+          <div class="hinge hinge-right"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mod Aksiyon Kontrolleri (Kronometre & Zamanlayıcı) -->
+    <div class="mode-action-bar hidden" id="modeActionBar">
+      <!-- Kronometre Kontrolleri -->
+      <div class="action-group stopwatch-controls hidden" id="stopwatchControls">
+        <button type="button" class="action-btn btn-primary" id="btnStopwatchToggle">
+          <svg class="action-icon icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="action-icon icon-pause hidden" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          <span class="btn-text" id="stopwatchToggleText">Başlat</span>
+        </button>
+        <button type="button" class="action-btn" id="btnStopwatchLap" title="Tur Ekle (L)">
+          <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg>
+          <span class="btn-text">Tur</span>
+        </button>
+        <button type="button" class="action-btn btn-secondary" id="btnStopwatchReset" title="Sıfırla (R)">
+          <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          <span class="btn-text">Sıfırla</span>
+        </button>
+      </div>
+
+      <!-- Zamanlayıcı Kontrolleri -->
+      <div class="action-group timer-controls hidden" id="timerControls">
+        <button type="button" class="action-btn btn-primary" id="btnTimerToggle">
+          <svg class="action-icon icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="action-icon icon-pause hidden" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          <span class="btn-text" id="timerToggleText">Başlat</span>
+        </button>
+        <button type="button" class="action-btn" id="btnOpenTimerSetup" title="Süreyi Ayarla (A)">
+          <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          <span class="btn-text">Süre Belirle</span>
+        </button>
+        <button type="button" class="action-btn btn-secondary" id="btnTimerReset" title="Sıfırla (R)">
+          <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          <span class="btn-text">Sıfırla</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Zamanlayıcı Hızlı Hazır Süreler (Presets) -->
+    <div class="timer-presets hidden" id="timerPresets">
+      <button type="button" class="preset-pill" data-seconds="60">1 dk</button>
+      <button type="button" class="preset-pill" data-seconds="180">3 dk</button>
+      <button type="button" class="preset-pill active" data-seconds="300">5 dk</button>
+      <button type="button" class="preset-pill" data-seconds="600">10 dk</button>
+      <button type="button" class="preset-pill" data-seconds="900">15 dk</button>
+      <button type="button" class="preset-pill" data-seconds="1500">25 dk (Pomodoro)</button>
+      <button type="button" class="preset-pill" data-seconds="1800">30 dk</button>
+      <button type="button" class="preset-pill" data-seconds="3600">60 dk</button>
+    </div>
+
+    <!-- Kronometre Tur Listesi -->
+    <div class="laps-container hidden" id="lapsContainer">
+      <div class="laps-header">
+        <span>Turlar (<span id="lapCount">0</span>)</span>
+        <button type="button" class="laps-clear-btn" id="btnClearLaps" title="Turları Temizle">Temizle</button>
+      </div>
+      <div class="laps-list" id="lapsList"></div>
+    </div>
+  </main>
+
+  <!-- Yüzen Hızlı Kontroller (Gereksiz olduğunda gizlenir) -->
+  <aside class="floating-controls" id="floatingControls" aria-label="Hızlı Kontroller">
+    <button class="icon-btn" id="btnToggleWakeLock" title="Ekranı Açık Tut (W)" aria-label="Ekranı Açık Tut">
+      <svg class="icon icon-wakelock-on" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c-.39-.39-.39-1.03 0-1.41s-1.03-.39-1.41 0z"/>
+      </svg>
+      <svg class="icon icon-wakelock-off" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:none;">
+        <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+      </svg>
+    </button>
+    
+    <button class="icon-btn" id="btnToggleSound" title="Sesi Aç/Kapat (M)" aria-label="Ses">
+      <svg class="icon icon-sound-on" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      </svg>
+      <svg class="icon icon-sound-off" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:none;">
+        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+      </svg>
+    </button>
+    
+    <button class="icon-btn" id="btnToggleFullscreen" title="Tam Ekran (F)" aria-label="Tam Ekran">
+      <svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+      </svg>
+    </button>
+
+    <button class="icon-btn" id="btnToggleSettings" title="Ayarlar (H / Space)" aria-label="Ayarlar">
+      <svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+      </svg>
+    </button>
+  </aside>
+
+  <!-- Ayarlar Paneli / Modal -->
+  <div class="settings-modal-backdrop" id="settingsBackdrop"></div>
+  <section class="settings-panel" id="settingsPanel" aria-labelledby="settingsHeading">
+    <div class="settings-header">
+      <h2 id="settingsHeading">Fliqlo Ayarları</h2>
+      <button class="close-btn" id="btnCloseSettings" aria-label="Kapat">&times;</button>
+    </div>
+
+    <div class="settings-body">
+      <!-- Zaman Formatı -->
+      <div class="setting-group">
+        <label class="setting-label">Zaman Formatı</label>
+        <div class="segmented-control" id="formatControl">
+          <button type="button" class="segment-btn active" data-value="12">12 Saat (AM/PM)</button>
+          <button type="button" class="segment-btn" data-value="24">24 Saat</button>
+        </div>
+      </div>
+
+      <!-- Saniye Gösterimi -->
+      <div class="setting-group setting-row">
+        <div class="setting-text">
+          <label class="setting-label" for="toggleSeconds">Saniyeleri Göster</label>
+          <span class="setting-desc">Saat ve dakikanın yanına saniye kartı ekler</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleSeconds">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Tarih Gösterimi -->
+      <div class="setting-group setting-row">
+        <div class="setting-text">
+          <label class="setting-label" for="toggleDate">Tarihi Göster</label>
+          <span class="setting-desc">Üst kısımda gün ve tarih bilgisini gösterir</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleDate" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Ekranı Açık Tut (Wake Lock) -->
+      <div class="setting-group setting-row">
+        <div class="setting-text">
+          <label class="setting-label" for="toggleWakeLock">Ekranı Açık Tut</label>
+          <span class="setting-desc">Tablet ve telefon ekranının uykuya geçmesini önler</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleWakeLock">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Mekanik Ses -->
+      <div class="setting-group setting-row">
+        <div class="setting-text">
+          <label class="setting-label" for="toggleSound">Mekanik Yaprak Sesi</label>
+          <span class="setting-desc">Her geçişte gerçekçi split-flap klik sesi çalar</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleSound">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Ses Düzeyi -->
+      <div class="setting-group" id="volumeGroup" style="display:none;">
+        <div class="slider-header">
+          <label class="setting-label" for="soundVolume">Ses Seviyesi</label>
+          <span class="slider-val" id="volumeVal">50%</span>
+        </div>
+        <input type="range" id="soundVolume" min="0" max="100" value="50" class="range-slider">
+      </div>
+
+      <!-- Boyut / Ölçek -->
+      <div class="setting-group">
+        <div class="slider-header">
+          <label class="setting-label" for="clockScale">Saat Boyutu</label>
+          <span class="slider-val" id="scaleVal">100%</span>
+        </div>
+        <input type="range" id="clockScale" min="50" max="160" value="100" class="range-slider">
+      </div>
+
+      <!-- Tema Seçimi -->
+      <div class="setting-group">
+        <label class="setting-label">Tema</label>
+        <div class="theme-grid" id="themeGrid">
+          <button type="button" class="theme-option active" data-theme="theme-fliqlo-dark">
+            <span class="theme-preview dark-preview"></span>
+            <span class="theme-name">Fliqlo Siyah</span>
+          </button>
+          <button type="button" class="theme-option" data-theme="theme-fliqlo-light">
+            <span class="theme-preview light-preview"></span>
+            <span class="theme-name">Minimal Beyaz</span>
+          </button>
+          <button type="button" class="theme-option" data-theme="theme-fliqlo-amber">
+            <span class="theme-preview amber-preview"></span>
+            <span class="theme-name">Retro Amber</span>
+          </button>
+          <button type="button" class="theme-option" data-theme="theme-fliqlo-neon">
+            <span class="theme-preview neon-preview"></span>
+            <span class="theme-name">Matrix Neon</span>
+          </button>
+          <button type="button" class="theme-option" data-theme="theme-fliqlo-nord">
+            <span class="theme-preview nord-preview"></span>
+            <span class="theme-name">Nord Kutup</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Yazı Tipi (Font) Seçimi -->
+      <div class="setting-group">
+        <label class="setting-label">Yazı Tipi (Font)</label>
+        <div class="font-grid" id="fontGrid">
+          <button type="button" class="font-option active" data-font="font-inter">
+            <span class="font-sample" style="font-family: 'Inter', sans-serif;">12</span>
+            <span class="font-name">Inter (Orijinal)</span>
+          </button>
+          <button type="button" class="font-option" data-font="font-bebas">
+            <span class="font-sample" style="font-family: 'Bebas Neue', sans-serif;">12</span>
+            <span class="font-name">Bebas Neue (Flap)</span>
+          </button>
+          <button type="button" class="font-option" data-font="font-oswald">
+            <span class="font-sample" style="font-family: 'Oswald', sans-serif;">12</span>
+            <span class="font-name">Oswald (Kondanse)</span>
+          </button>
+          <button type="button" class="font-option" data-font="font-mono">
+            <span class="font-sample" style="font-family: 'JetBrains Mono', monospace;">12</span>
+            <span class="font-name">JetBrains Mono</span>
+          </button>
+          <button type="button" class="font-option" data-font="font-orbitron">
+            <span class="font-sample" style="font-family: 'Orbitron', sans-serif;">12</span>
+            <span class="font-name">Orbitron (Siber)</span>
+          </button>
+          <button type="button" class="font-option" data-font="font-playfair">
+            <span class="font-sample" style="font-family: 'Playfair Display', serif;">12</span>
+            <span class="font-name">Playfair (Serif)</span>
+          </button>
+          <button type="button" class="font-option" data-font="font-space">
+            <span class="font-sample" style="font-family: 'Space Grotesk', sans-serif;">12</span>
+            <span class="font-name">Space Grotesk</span>
+          </button>
+          <button type="button" class="font-option" data-font="font-syne">
+            <span class="font-sample" style="font-family: 'Syne', sans-serif;">12</span>
+            <span class="font-name">Syne (Bold)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Klavye Kısayolları Bilgilendirmesi -->
+      <div class="setting-group shortcuts-info">
+        <label class="setting-label">Klavye Kısayolları</label>
+        <ul class="shortcuts-list">
+          <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> Mod Değiştir</li>
+          <li><kbd>Space</kbd> Başlat / Duraklat</li>
+          <li><kbd>R</kbd> Sıfırla</li>
+          <li><kbd>L</kbd> Tur Ekle (Kronometre)</li>
+          <li><kbd>A</kbd> Süre Belirle (Zamanlayıcı)</li>
+          <li><kbd>F</kbd> Tam Ekran</li>
+          <li><kbd>T</kbd> 12 / 24 Saat</li>
+          <li><kbd>S</kbd> Saniye Aç/Kapat</li>
+          <li><kbd>D</kbd> Temayı Değiştir</li>
+          <li><kbd>O</kbd> Fontu Değiştir</li>
+          <li><kbd>M</kbd> Sesi Aç/Kapat</li>
+          <li><kbd>H</kbd> / <kbd>Esc</kbd> Ayarlar</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Zamanlayıcı Kurma Modalı -->
+  <div class="settings-modal-backdrop" id="timerModalBackdrop"></div>
+  <section class="settings-panel timer-modal" id="timerModal" aria-labelledby="timerModalHeading">
+    <div class="settings-header">
+      <h2 id="timerModalHeading">Zamanlayıcı Süresini Ayarla</h2>
+      <button class="close-btn" id="btnCloseTimerModal" aria-label="Kapat">&times;</button>
+    </div>
+    <div class="settings-body timer-modal-body">
+      <div class="timer-inputs-grid">
+        <div class="timer-input-group">
+          <label for="timerInputHours">Saat</label>
+          <div class="spin-box">
+            <button type="button" class="spin-btn spin-up" data-target="timerInputHours">+</button>
+            <input type="number" id="timerInputHours" min="0" max="99" value="0" class="timer-num-input">
+            <button type="button" class="spin-btn spin-down" data-target="timerInputHours">-</button>
+          </div>
+        </div>
+        <div class="timer-input-sep">:</div>
+        <div class="timer-input-group">
+          <label for="timerInputMinutes">Dakika</label>
+          <div class="spin-box">
+            <button type="button" class="spin-btn spin-up" data-target="timerInputMinutes">+</button>
+            <input type="number" id="timerInputMinutes" min="0" max="59" value="5" class="timer-num-input">
+            <button type="button" class="spin-btn spin-down" data-target="timerInputMinutes">-</button>
+          </div>
+        </div>
+        <div class="timer-input-sep">:</div>
+        <div class="timer-input-group">
+          <label for="timerInputSeconds">Saniye</label>
+          <div class="spin-box">
+            <button type="button" class="spin-btn spin-up" data-target="timerInputSeconds">+</button>
+            <input type="number" id="timerInputSeconds" min="0" max="59" value="0" class="timer-num-input">
+            <button type="button" class="spin-btn spin-down" data-target="timerInputSeconds">-</button>
+          </div>
+        </div>
+      </div>
+      <div class="timer-modal-presets">
+        <span class="setting-desc">Hızlı Seçim:</span>
+        <div class="modal-presets-pills">
+          <button type="button" class="modal-preset-btn" data-h="0" data-m="1" data-s="0">1 dk</button>
+          <button type="button" class="modal-preset-btn" data-h="0" data-m="3" data-s="0">3 dk</button>
+          <button type="button" class="modal-preset-btn" data-h="0" data-m="5" data-s="0">5 dk</button>
+          <button type="button" class="modal-preset-btn" data-h="0" data-m="10" data-s="0">10 dk</button>
+          <button type="button" class="modal-preset-btn" data-h="0" data-m="15" data-s="0">15 dk</button>
+          <button type="button" class="modal-preset-btn" data-h="0" data-m="25" data-s="0">25 dk (Pomodoro)</button>
+          <button type="button" class="modal-preset-btn" data-h="1" data-m="0" data-s="0">1 Saat</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary modal-action-btn" id="btnSaveTimer">Ayarla ve Başlat</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Zamanlayıcı Alarm Bildirimi / Overlay -->
+  <div class="timer-alarm-overlay hidden" id="timerAlarmOverlay" role="dialog" aria-modal="true" aria-label="Süre Doldu">
+    <div class="timer-alarm-card">
+      <div class="alarm-bell-icon" aria-hidden="true">🔔</div>
+      <h3 class="alarm-title">Süre Doldu!</h3>
+      <p class="alarm-desc" id="alarmDetail">Zamanlayıcı tamamlandı.</p>
+      <button type="button" class="action-btn btn-primary" id="btnStopAlarm">Tamam (Kapat)</button>
+    </div>
+  </div>
+
+  <!-- Ekran İpucu / Screensaver Bildirimi -->
+  <div class="screensaver-hint" id="screensaverHint">
+    Tam ekran moduna geçmek için <strong>F</strong> tuşuna basın
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
