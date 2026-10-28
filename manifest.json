@@ -1,6 +1,6 @@
 {
-  "name": "Fliqlo - Flip Clock",
-  "short_name": "Fliqlo",
+  "name": "fliqClock - Flip Clock",
+  "short_name": "fliqClock",
   "description": "Modern Web Flip Clock, Stopwatch & Countdown Timer Screensaver",
   "start_url": "./index.html",
   "display": "standalone",
