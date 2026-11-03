@@ -1,4 +1,3 @@
-
 # fliqClock - Modern Web Flip Clock 🕰️
 
 Dünyaca ünlü yaprak saat (flip clock) ekran koruyucusu tasarımının modern web teknolojileri (HTML5, CSS 3D Transforms, Vanilla JS) ile geliştirilmiş; telefon, tablet ve masaüstü uyumlu, PWA destekli sürümü.

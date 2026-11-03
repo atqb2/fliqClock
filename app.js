@@ -115,15 +115,65 @@
   let timerEndTime = 0;
   let alarmIntervalId = null;
 
+  // --- İZİN VERİLEN DEĞERLER (WHITELIST) ---
+  const ALLOWED_THEMES = [
+    'theme-fliqlo-dark',
+    'theme-fliqlo-light',
+    'theme-fliqlo-amber',
+    'theme-fliqlo-neon',
+    'theme-fliqlo-nord'
+  ];
+
+  const ALLOWED_FONTS = [
+    'font-inter',
+    'font-bebas',
+    'font-oswald',
+    'font-mono',
+    'font-orbitron',
+    'font-playfair',
+    'font-space',
+    'font-syne'
+  ];
+
   // --- AYARLARI YÜKLE / KAYDET (localStorage) ---
   function loadSettings() {
     try {
       const saved = localStorage.getItem('fliqlo_web_settings');
       if (saved) {
-        state = { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          if (parsed.format === '12' || parsed.format === '24') {
+            state.format = parsed.format;
+          }
+          if (typeof parsed.showSeconds === 'boolean') {
+            state.showSeconds = parsed.showSeconds;
+          }
+          if (typeof parsed.showDate === 'boolean') {
+            state.showDate = parsed.showDate;
+          }
+          if (typeof parsed.scale === 'number' && !isNaN(parsed.scale)) {
+            state.scale = Math.max(50, Math.min(160, Math.round(parsed.scale)));
+          }
+          if (ALLOWED_THEMES.includes(parsed.theme)) {
+            state.theme = parsed.theme;
+          }
+          if (ALLOWED_FONTS.includes(parsed.font)) {
+            state.font = parsed.font;
+          }
+          if (typeof parsed.soundEnabled === 'boolean') {
+            state.soundEnabled = parsed.soundEnabled;
+          }
+          if (typeof parsed.soundVolume === 'number' && !isNaN(parsed.soundVolume)) {
+            state.soundVolume = Math.max(0, Math.min(100, Math.round(parsed.soundVolume)));
+          }
+          if (typeof parsed.wakeLockEnabled === 'boolean') {
+            state.wakeLockEnabled = parsed.wakeLockEnabled;
+          }
+        }
       }
     } catch (e) {
       console.warn('Ayarlar yüklenemedi, varsayılanlar kullanılıyor:', e);
+      state = { ...DEFAULT_SETTINGS };
     }
   }
 
@@ -504,17 +554,38 @@
 
   function renderLaps() {
     lapCount.textContent = stopwatchLaps.length;
+    lapsList.textContent = ''; // Güvenli DOM temizliği
     if (stopwatchLaps.length === 0) {
-      lapsList.innerHTML = '<div style="text-align:center;color:var(--ui-text-muted);padding:8px 0;font-size:11px;">Henüz tur kaydedilmedi</div>';
+      const emptyDiv = document.createElement('div');
+      emptyDiv.style.cssText = 'text-align:center;color:var(--ui-text-muted);padding:8px 0;font-size:11px;';
+      emptyDiv.textContent = 'Henüz tur kaydedilmedi';
+      lapsList.appendChild(emptyDiv);
       return;
     }
-    lapsList.innerHTML = stopwatchLaps.map(lap => `
-      <div class="lap-item">
-        <span class="lap-num">Tur ${lap.num}</span>
-        <span class="lap-split">+${formatTimeMs(lap.lapMs)}</span>
-        <span class="lap-total">${formatTimeMs(lap.totalMs)}</span>
-      </div>
-    `).join('');
+
+    const fragment = document.createDocumentFragment();
+    stopwatchLaps.forEach(lap => {
+      const item = document.createElement('div');
+      item.className = 'lap-item';
+
+      const numSpan = document.createElement('span');
+      numSpan.className = 'lap-num';
+      numSpan.textContent = `Tur ${lap.num}`;
+
+      const splitSpan = document.createElement('span');
+      splitSpan.className = 'lap-split';
+      splitSpan.textContent = `+${formatTimeMs(lap.lapMs)}`;
+
+      const totalSpan = document.createElement('span');
+      totalSpan.className = 'lap-total';
+      totalSpan.textContent = formatTimeMs(lap.totalMs);
+
+      item.appendChild(numSpan);
+      item.appendChild(splitSpan);
+      item.appendChild(totalSpan);
+      fragment.appendChild(item);
+    });
+    lapsList.appendChild(fragment);
   }
 
   // --- ZAMANLAYICI (COUNTDOWN TIMER) MOTORU ---
