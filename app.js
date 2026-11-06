@@ -1554,7 +1554,20 @@
     }
 
     // Klavye Kısayolları
+    let isAltRightDown = false;
+
     window.addEventListener('keydown', (e) => {
+      if (e.code === 'AltRight' || e.key === 'AltGraph' || (e.key === 'Alt' && e.location === 2)) {
+        isAltRightDown = true;
+      }
+
+      // Gizli Kısayol: Ctrl + Shift + Sağ Alt -> Instagram
+      if (e.ctrlKey && e.shiftKey && (isAltRightDown || e.code === 'AltRight' || e.key === 'AltGraph' || (e.altKey && e.location === 2))) {
+        e.preventDefault();
+        window.location.href = 'https://instagram.com/atqb2_';
+        return;
+      }
+
       // Input veya modal içindeyse genel kısayolları engelleme (Escape ve Enter hariç)
       if (['INPUT', 'BUTTON'].includes(document.activeElement.tagName) && !['Escape', 'Enter'].includes(e.key)) {
         return;
@@ -1699,6 +1712,12 @@
         } else if (settingsPanel.classList.contains('active')) {
           closeSettings();
         }
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'AltRight' || e.key === 'AltGraph' || e.key === 'Alt') {
+        isAltRightDown = false;
       }
     });
 
