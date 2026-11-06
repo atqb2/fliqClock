@@ -8,10 +8,11 @@ Dünyaca ünlü yaprak saat (flip clock) ekran koruyucusu tasarımının modern 
 
 ## 🌟 Özellikler
 
-- 🕒 **3 Farklı Çalışma Modu**:
+- 🕒 **4 Farklı Çalışma Modu**:
   - **Saat (Clock)**: 12s / 24s formatı, AM/PM rozeti, Türkçe tarih gösterimi
   - **Kronometre (Stopwatch)**: Saat, dakika, saniye ileri sayım; Başlat/Durdur/Sıfırla ve Tur (Lap) kaydetme listesi
-  - **Zamanlayıcı (Timer)**: Saat, dakika, saniye geri sayım; 1dk - 60dk hızlı hazır süreler (Pomodoro dahil), özel süre kurma modalı ve süre dolduğunda Web Audio polifonik sesli alarm + görsel uyarı
+  - **Zamanlayıcı (Timer)**: Saat, dakika, saniye geri sayım; 1dk - 60dk hızlı hazır süreler, özel süre kurma modalı ve süre dolduğunda Web Audio polifonik alarm
+  - **🍅 Pomodoro (Odaklanma Modu)**: Ders çalışma ve mola sürelerini belirleme; seans takibi (4'lü seans döngü göstergesi), otomatik veya tek tıkla aşama geçişi, sesli uyarılar ve süre dolduğunda özel motivasyon bildirimleri
 - 📱 **Telefon & Tablet Tam Uyumluluğu (Responsive & Dock Modu)**:
   - **Yatay Masa / Komodin Saati**: Telefonu veya tableti şarja takıp yatay koyduğunuzda kartlar ekran yüksekliğine göre otomatik orantılanır.
   - **Dikey Görünüm**: 2 kart veya 3 kart (saniye açıkken) ekrandan asla taşmaz (`nowrap`), alt satıra kaymaz.
@@ -52,15 +53,16 @@ Dünyaca ünlü yaprak saat (flip clock) ekran koruyucusu tasarımının modern 
 | `1` | Saat Moduna Geç |
 | `2` | Kronometre Moduna Geç |
 | `3` | Zamanlayıcı Moduna Geç |
-| `Space` | Kronometre / Zamanlayıcı Başlat & Duraklat (Saat modunda Ayarlar) |
-| `R` | Sıfırla (Kronometre & Zamanlayıcı) |
+| `4` | Pomodoro Odaklanma Moduna Geç |
+| `Space` | Başlat & Duraklat (Kronometre, Zamanlayıcı, Pomodoro) / Ayarlar (Saat) |
+| `R` | Sıfırla (Kronometre, Zamanlayıcı, Pomodoro) |
+| `S` | Pomodoro Aşama Atla (Dersten Molaya / Moladan Derse) / Saniye Aç-Kapat |
+| `A` | Süreleri Ayarla (Zamanlayıcı & Pomodoro) |
 | `L` | Tur Ekle (Kronometre) |
-| `A` | Süre Belirle Modalı (Zamanlayıcı) |
-| `Enter` | Çalan Alarmı Kapat |
+| `Enter` | Alarmı / Pomodoro Bildirimini Kapat & Başlat |
 | `F` | Tam Ekran (Fullscreen) Aç / Kapat |
 | `W` | Ekranı Sürekli Açık Tut (Wake Lock) Aç / Kapat |
 | `T` | 12 Saat / 24 Saat Formatı Değiştir |
-| `S` | Saniye Kartını Göster / Gizle (Saat modu) |
 | `D` | Temayı Değiştir (Temalar arası döngü) |
 | `O` | Fontu Değiştir (Fontlar arası döngü) |
 | `M` | Mekanik Klik Sesini Aç / Kapat |

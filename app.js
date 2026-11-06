@@ -16,7 +16,9 @@
     font: 'font-inter',     // Yazı tipi
     soundEnabled: false,    // Mekanik klik sesi
     soundVolume: 50,        // Ses seviyesi (%)
-    wakeLockEnabled: false  // Ekranı açık tut (Wake Lock)
+    wakeLockEnabled: false, // Ekranı açık tut (Wake Lock)
+    pomodoroWorkMin: 25,    // Pomodoro çalışma süresi (dk)
+    pomodoroBreakMin: 5     // Pomodoro mola süresi (dk)
   };
 
   let state = { ...DEFAULT_SETTINGS };
@@ -60,11 +62,12 @@
   const themeGrid = document.getElementById('themeGrid');
   const fontGrid = document.getElementById('fontGrid');
 
-  // Mod Seçici & Aksiyonlar (Saat / Kronometre / Zamanlayıcı)
+  // Mod Seçici & Aksiyonlar (Saat / Kronometre / Zamanlayıcı / Pomodoro)
   const modeNavigation = document.getElementById('modeNavigation');
   const modeBtnClock = document.getElementById('modeBtnClock');
   const modeBtnStopwatch = document.getElementById('modeBtnStopwatch');
   const modeBtnTimer = document.getElementById('modeBtnTimer');
+  const modeBtnPomodoro = document.getElementById('modeBtnPomodoro');
 
   const modeActionBar = document.getElementById('modeActionBar');
   const stopwatchControls = document.getElementById('stopwatchControls');
@@ -78,6 +81,19 @@
   const timerToggleText = document.getElementById('timerToggleText');
   const btnOpenTimerSetup = document.getElementById('btnOpenTimerSetup');
   const btnTimerReset = document.getElementById('btnTimerReset');
+
+  const pomodoroControls = document.getElementById('pomodoroControls');
+  const btnPomodoroToggle = document.getElementById('btnPomodoroToggle');
+  const pomodoroToggleText = document.getElementById('pomodoroToggleText');
+  const btnPomodoroSkip = document.getElementById('btnPomodoroSkip');
+  const pomodoroSkipText = document.getElementById('pomodoroSkipText');
+  const btnOpenPomodoroSetup = document.getElementById('btnOpenPomodoroSetup');
+  const btnPomodoroReset = document.getElementById('btnPomodoroReset');
+
+  const pomodoroTracker = document.getElementById('pomodoroTracker');
+  const pomodoroBadge = document.getElementById('pomodoroBadge');
+  const pomodoroCycleText = document.getElementById('pomodoroCycleText');
+  const pomodoroDots = document.getElementById('pomodoroDots');
 
   const timerPresets = document.getElementById('timerPresets');
   const lapsContainer = document.getElementById('lapsContainer');
@@ -94,13 +110,29 @@
   const timerInputSeconds = document.getElementById('timerInputSeconds');
   const btnSaveTimer = document.getElementById('btnSaveTimer');
 
+  // Pomodoro Kurma Modalı
+  const pomodoroModal = document.getElementById('pomodoroModal');
+  const pomodoroModalBackdrop = document.getElementById('pomodoroModalBackdrop');
+  const btnClosePomodoroModal = document.getElementById('btnClosePomodoroModal');
+  const pomodoroInputWork = document.getElementById('pomodoroInputWork');
+  const pomodoroInputBreak = document.getElementById('pomodoroInputBreak');
+  const btnStartPomodoroWithSetup = document.getElementById('btnStartPomodoroWithSetup');
+
   // Zamanlayıcı Alarm Overlay
   const timerAlarmOverlay = document.getElementById('timerAlarmOverlay');
   const btnStopAlarm = document.getElementById('btnStopAlarm');
   const alarmDetail = document.getElementById('alarmDetail');
 
+  // Pomodoro Aşama Bildirimi Overlay
+  const pomodoroAlertOverlay = document.getElementById('pomodoroAlertOverlay');
+  const pomodoroAlertIcon = document.getElementById('pomodoroAlertIcon');
+  const pomodoroAlertTitle = document.getElementById('pomodoroAlertTitle');
+  const pomodoroAlertDesc = document.getElementById('pomodoroAlertDesc');
+  const btnPomodoroAlertNext = document.getElementById('btnPomodoroAlertNext');
+  const btnPomodoroAlertDismiss = document.getElementById('btnPomodoroAlertDismiss');
+
   // --- MOD & SAAT DURUMLARI (STATE) ---
-  let currentMode = 'clock'; // 'clock' | 'stopwatch' | 'timer'
+  let currentMode = 'clock'; // 'clock' | 'stopwatch' | 'timer' | 'pomodoro'
 
   // Kronometre Durumu
   let stopwatchRunning = false;
@@ -114,6 +146,16 @@
   let timerRunning = false;
   let timerEndTime = 0;
   let alarmIntervalId = null;
+
+  // Pomodoro Durumu
+  let pomodoroRunning = false;
+  let pomodoroPhase = 'work'; // 'work' | 'break'
+  let pomodoroWorkDuration = (DEFAULT_SETTINGS.pomodoroWorkMin || 25) * 60;
+  let pomodoroBreakDuration = (DEFAULT_SETTINGS.pomodoroBreakMin || 5) * 60;
+  let pomodoroRemaining = pomodoroWorkDuration;
+  let pomodoroEndTime = 0;
+  let pomodoroCompletedCycles = 0;
+  let pomodoroHasConfiguredOnce = false;
 
   // --- İZİN VERİLEN DEĞERLER (WHITELIST) ---
   const ALLOWED_THEMES = [
@@ -169,11 +211,23 @@
           if (typeof parsed.wakeLockEnabled === 'boolean') {
             state.wakeLockEnabled = parsed.wakeLockEnabled;
           }
+          if (typeof parsed.pomodoroWorkMin === 'number' && !isNaN(parsed.pomodoroWorkMin)) {
+            state.pomodoroWorkMin = Math.max(1, Math.min(180, Math.round(parsed.pomodoroWorkMin)));
+          }
+          if (typeof parsed.pomodoroBreakMin === 'number' && !isNaN(parsed.pomodoroBreakMin)) {
+            state.pomodoroBreakMin = Math.max(1, Math.min(60, Math.round(parsed.pomodoroBreakMin)));
+          }
         }
       }
+      pomodoroWorkDuration = (state.pomodoroWorkMin || 25) * 60;
+      pomodoroBreakDuration = (state.pomodoroBreakMin || 5) * 60;
+      pomodoroRemaining = pomodoroWorkDuration;
     } catch (e) {
       console.warn('Ayarlar yüklenemedi, varsayılanlar kullanılıyor:', e);
       state = { ...DEFAULT_SETTINGS };
+      pomodoroWorkDuration = 25 * 60;
+      pomodoroBreakDuration = 5 * 60;
+      pomodoroRemaining = pomodoroWorkDuration;
     }
   }
 
@@ -396,16 +450,18 @@
     currentMode = mode;
 
     // Mod butonlarının aktifliğini güncelle
-    [modeBtnClock, modeBtnStopwatch, modeBtnTimer].forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.mode === mode);
+    [modeBtnClock, modeBtnStopwatch, modeBtnTimer, modeBtnPomodoro].forEach(btn => {
+      if (btn) btn.classList.toggle('active', btn.dataset.mode === mode);
     });
 
     if (mode === 'clock') {
       modeActionBar.classList.add('hidden');
       stopwatchControls.classList.add('hidden');
       timerControls.classList.add('hidden');
+      pomodoroControls.classList.add('hidden');
       timerPresets.classList.add('hidden');
       lapsContainer.classList.add('hidden');
+      pomodoroTracker.classList.add('hidden');
 
       if (state.showSeconds) {
         unitSeconds.classList.remove('hidden');
@@ -422,8 +478,10 @@
       modeActionBar.classList.remove('hidden');
       stopwatchControls.classList.remove('hidden');
       timerControls.classList.add('hidden');
+      pomodoroControls.classList.add('hidden');
       timerPresets.classList.add('hidden');
       lapsContainer.classList.remove('hidden');
+      pomodoroTracker.classList.add('hidden');
 
       unitSeconds.classList.remove('hidden');
       body.classList.add('has-seconds');
@@ -436,8 +494,10 @@
       modeActionBar.classList.remove('hidden');
       stopwatchControls.classList.add('hidden');
       timerControls.classList.remove('hidden');
+      pomodoroControls.classList.add('hidden');
       timerPresets.classList.remove('hidden');
       lapsContainer.classList.add('hidden');
+      pomodoroTracker.classList.add('hidden');
 
       unitSeconds.classList.remove('hidden');
       body.classList.add('has-seconds');
@@ -445,6 +505,27 @@
       dateDisplay.classList.remove('hidden');
 
       updateTimerDisplay(true);
+    } else if (mode === 'pomodoro') {
+      modeActionBar.classList.remove('hidden');
+      stopwatchControls.classList.add('hidden');
+      timerControls.classList.add('hidden');
+      pomodoroControls.classList.remove('hidden');
+      timerPresets.classList.add('hidden');
+      lapsContainer.classList.add('hidden');
+      pomodoroTracker.classList.remove('hidden');
+
+      unitSeconds.classList.remove('hidden');
+      body.classList.add('has-seconds');
+      ampmBadge.classList.add('hidden');
+      dateDisplay.classList.remove('hidden');
+
+      updatePomodoroDisplay(true);
+      renderPomodoroTracker();
+
+      // Kullanıcı ilk kez Pomodoro'ya geçtiğinde veya henüz başlatmadıysa süreyi sormak için modalı aç
+      if (!pomodoroHasConfiguredOnce && !pomodoroRunning) {
+        openPomodoroSetup();
+      }
     }
   }
 
@@ -764,6 +845,262 @@
     }
   }
 
+  // --- POMODORO MOTORU ---
+  function updatePomodoroDisplay(initial = false) {
+    const remaining = pomodoroRunning ? Math.max(0, Math.ceil((pomodoroEndTime - performance.now()) / 1000)) : pomodoroRemaining;
+    const h = Math.floor(remaining / 3600);
+    const m = Math.floor((remaining % 3600) / 60);
+    const s = remaining % 60;
+
+    const hStr = String(h).padStart(2, '0');
+    const mStr = String(m).padStart(2, '0');
+    const sStr = String(s).padStart(2, '0');
+
+    if (initial) {
+      hoursUnit.setInitialValue(hStr);
+      minutesUnit.setInitialValue(mStr);
+      secondsUnit.setInitialValue(sStr);
+    } else {
+      hoursUnit.update(hStr);
+      minutesUnit.update(mStr);
+      secondsUnit.update(sStr);
+    }
+
+    if (currentMode === 'pomodoro') {
+      const minText = Math.floor(remaining / 60);
+      const secText = remaining % 60;
+      if (pomodoroPhase === 'work') {
+        dateDayName.textContent = '🎯 Odaklanma Zamanı (Ders)';
+        dateFull.textContent = pomodoroRunning
+          ? `Pomodoro #${pomodoroCompletedCycles + 1} • Kalan: ${minText} dk ${secText} sn`
+          : (pomodoroRemaining === pomodoroWorkDuration ? `Hazır: ${Math.round(pomodoroWorkDuration / 60)} Dakika Ders` : 'Duraklatıldı');
+      } else {
+        dateDayName.textContent = '☕ Mola Zamanı (Dinlenme)';
+        dateFull.textContent = pomodoroRunning
+          ? `Mola #${pomodoroCompletedCycles} • Kalan: ${minText} dk ${secText} sn`
+          : 'Duraklatıldı';
+      }
+    }
+  }
+
+  function renderPomodoroTracker() {
+    if (!pomodoroTracker) return;
+    if (pomodoroPhase === 'work') {
+      pomodoroBadge.className = 'pomodoro-badge badge-work';
+      pomodoroBadge.textContent = '🎯 DERS ZAMANI';
+      pomodoroSkipText.textContent = 'Molaya Geç';
+    } else {
+      pomodoroBadge.className = 'pomodoro-badge badge-break';
+      pomodoroBadge.textContent = '☕ MOLA ZAMANI';
+      pomodoroSkipText.textContent = 'Derse Geç';
+    }
+
+    pomodoroCycleText.textContent = `Pomodoro #${pomodoroCompletedCycles + 1}`;
+
+    if (pomodoroDots) {
+      const curr = pomodoroCompletedCycles % 4;
+      const dots = pomodoroDots.querySelectorAll('.dot');
+      dots.forEach((dot, idx) => {
+        dot.className = 'dot';
+        if (idx < curr) {
+          dot.classList.add('completed');
+        } else if (idx === curr) {
+          dot.classList.add('current');
+        }
+      });
+    }
+  }
+
+  function togglePomodoro() {
+    initAudioContext();
+    stopPomodoroAlert();
+    if (!pomodoroRunning) {
+      if (pomodoroRemaining <= 0) {
+        pomodoroRemaining = pomodoroPhase === 'work' ? pomodoroWorkDuration : pomodoroBreakDuration;
+      }
+      pomodoroEndTime = performance.now() + pomodoroRemaining * 1000;
+      pomodoroRunning = true;
+      btnPomodoroToggle.querySelector('.icon-play').classList.add('hidden');
+      btnPomodoroToggle.querySelector('.icon-pause').classList.remove('hidden');
+      pomodoroToggleText.textContent = 'Durdur';
+      if (currentMode === 'pomodoro') {
+        updatePomodoroDisplay();
+      }
+    } else {
+      pomodoroRemaining = Math.max(0, Math.ceil((pomodoroEndTime - performance.now()) / 1000));
+      pomodoroRunning = false;
+      btnPomodoroToggle.querySelector('.icon-play').classList.remove('hidden');
+      btnPomodoroToggle.querySelector('.icon-pause').classList.add('hidden');
+      pomodoroToggleText.textContent = 'Devam Et';
+      if (currentMode === 'pomodoro') {
+        updatePomodoroDisplay();
+      }
+    }
+  }
+
+  function skipPomodoroPhase() {
+    initAudioContext();
+    stopPomodoroAlert();
+    playMechanicalFlapSound();
+    if (pomodoroPhase === 'work') {
+      pomodoroCompletedCycles++;
+      pomodoroPhase = 'break';
+      pomodoroRemaining = pomodoroBreakDuration;
+    } else {
+      pomodoroPhase = 'work';
+      pomodoroRemaining = pomodoroWorkDuration;
+    }
+    pomodoroRunning = false;
+    btnPomodoroToggle.querySelector('.icon-play').classList.remove('hidden');
+    btnPomodoroToggle.querySelector('.icon-pause').classList.add('hidden');
+    pomodoroToggleText.textContent = 'Başlat';
+    if (currentMode === 'pomodoro') {
+      updatePomodoroDisplay(true);
+      renderPomodoroTracker();
+    }
+  }
+
+  function resetPomodoro() {
+    initAudioContext();
+    stopPomodoroAlert();
+    pomodoroRunning = false;
+    pomodoroRemaining = pomodoroPhase === 'work' ? pomodoroWorkDuration : pomodoroBreakDuration;
+    btnPomodoroToggle.querySelector('.icon-play').classList.remove('hidden');
+    btnPomodoroToggle.querySelector('.icon-pause').classList.add('hidden');
+    pomodoroToggleText.textContent = 'Başlat';
+    if (currentMode === 'pomodoro') {
+      updatePomodoroDisplay(true);
+      renderPomodoroTracker();
+    }
+  }
+
+  function openPomodoroSetup() {
+    const curWork = Math.round(pomodoroWorkDuration / 60);
+    const curBreak = Math.round(pomodoroBreakDuration / 60);
+    pomodoroInputWork.value = curWork;
+    pomodoroInputBreak.value = curBreak;
+
+    syncPomodoroModalButtons(curWork, curBreak);
+
+    pomodoroModal.classList.add('active');
+    pomodoroModalBackdrop.classList.add('active');
+  }
+
+  function closePomodoroSetup() {
+    pomodoroModal.classList.remove('active');
+    pomodoroModalBackdrop.classList.remove('active');
+  }
+
+  function syncPomodoroModalButtons(w, b) {
+    document.querySelectorAll('.pomodoro-template-btn').forEach(btn => {
+      const match = Number(btn.dataset.work) === w && Number(btn.dataset.break) === b;
+      btn.classList.toggle('active', match);
+    });
+
+    document.querySelectorAll('.mini-pill[data-target="pomodoroInputWork"]').forEach(pill => {
+      pill.classList.toggle('active', Number(pill.dataset.val) === w);
+    });
+    document.querySelectorAll('.mini-pill[data-target="pomodoroInputBreak"]').forEach(pill => {
+      pill.classList.toggle('active', Number(pill.dataset.val) === b);
+    });
+  }
+
+  function savePomodoroSetupAndStart() {
+    const w = Math.max(1, Math.min(180, parseInt(pomodoroInputWork.value, 10) || 25));
+    const b = Math.max(1, Math.min(60, parseInt(pomodoroInputBreak.value, 10) || 5));
+
+    state.pomodoroWorkMin = w;
+    state.pomodoroBreakMin = b;
+    saveSettings();
+
+    pomodoroWorkDuration = w * 60;
+    pomodoroBreakDuration = b * 60;
+    pomodoroPhase = 'work';
+    pomodoroRemaining = pomodoroWorkDuration;
+    pomodoroHasConfiguredOnce = true;
+
+    closePomodoroSetup();
+
+    if (currentMode === 'pomodoro') {
+      updatePomodoroDisplay(true);
+      renderPomodoroTracker();
+    }
+
+    if (!pomodoroRunning) {
+      togglePomodoro();
+    }
+  }
+
+  function triggerPomodoroTransition() {
+    pomodoroRunning = false;
+    pomodoroRemaining = 0;
+    btnPomodoroToggle.querySelector('.icon-play').classList.remove('hidden');
+    btnPomodoroToggle.querySelector('.icon-pause').classList.add('hidden');
+    pomodoroToggleText.textContent = 'Başlat';
+
+    if (pomodoroPhase === 'work') {
+      pomodoroCompletedCycles++;
+      playPomodoroTransitionSound(true);
+      pomodoroPhase = 'break';
+      pomodoroRemaining = pomodoroBreakDuration;
+
+      pomodoroAlertIcon.textContent = '🎉';
+      pomodoroAlertTitle.textContent = 'Ders Süresi Tamamlandı!';
+      pomodoroAlertDesc.textContent = `Harika bir odaklanma seansı oldu! Şimdi ${Math.round(pomodoroBreakDuration / 60)} dakikalık dinlenme vakti. Zihnini toparla ve biraz su iç.`;
+      btnPomodoroAlertNext.textContent = '☕ Molayı Başlat';
+    } else {
+      playPomodoroTransitionSound(false);
+      pomodoroPhase = 'work';
+      pomodoroRemaining = pomodoroWorkDuration;
+
+      pomodoroAlertIcon.textContent = '⏰';
+      pomodoroAlertTitle.textContent = 'Mola Bitti!';
+      pomodoroAlertDesc.textContent = `${Math.round(pomodoroBreakDuration / 60)} dakikalık dinlenme sona erdi. Yeni çalışma seansına hazır mısın? (Pomodoro #${pomodoroCompletedCycles + 1})`;
+      btnPomodoroAlertNext.textContent = '🚀 Dersi Başlat';
+    }
+
+    if (currentMode === 'pomodoro') {
+      updatePomodoroDisplay(true);
+      renderPomodoroTracker();
+    }
+
+    pomodoroAlertOverlay.classList.remove('hidden');
+  }
+
+  function stopPomodoroAlert() {
+    pomodoroAlertOverlay.classList.add('hidden');
+  }
+
+  function playPomodoroTransitionSound(isWorkToBreak) {
+    initAudioContext();
+    if (!audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      const vol = (state.soundVolume / 100) * 0.45;
+      
+      const freqs = isWorkToBreak
+        ? [523.25, 659.25, 783.99, 1046.50] // C5 - E5 - G5 - C6 (Pozitif & Sevinçli)
+        : [587.33, 880.00, 1174.66];        // D5 - A5 - D6 (Canlandırıcı Zil)
+
+      freqs.forEach((freq, idx) => {
+        const start = now + idx * 0.14;
+        const dur = 0.25;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(vol, start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(start);
+        osc.stop(start + dur + 0.05);
+      });
+    } catch (e) {
+      console.warn('Pomodoro geçiş sesi çalınamadı:', e);
+    }
+  }
+
   // --- EKRANI AÇIK TUTMA (SCREEN WAKE LOCK) ---
   let wakeLockSentinel = null;
 
@@ -1062,6 +1399,7 @@
       modeBtnClock.addEventListener('click', () => setMode('clock'));
       modeBtnStopwatch.addEventListener('click', () => setMode('stopwatch'));
       modeBtnTimer.addEventListener('click', () => setMode('timer'));
+      if (modeBtnPomodoro) modeBtnPomodoro.addEventListener('click', () => setMode('pomodoro'));
     }
 
     // Kronometre Butonları
@@ -1082,6 +1420,84 @@
     if (btnCloseTimerModal) btnCloseTimerModal.addEventListener('click', closeTimerSetup);
     if (timerModalBackdrop) timerModalBackdrop.addEventListener('click', closeTimerSetup);
     if (btnStopAlarm) btnStopAlarm.addEventListener('click', stopAlarm);
+
+    // Pomodoro Butonları
+    if (btnPomodoroToggle) btnPomodoroToggle.addEventListener('click', togglePomodoro);
+    if (btnPomodoroSkip) btnPomodoroSkip.addEventListener('click', skipPomodoroPhase);
+    if (btnOpenPomodoroSetup) btnOpenPomodoroSetup.addEventListener('click', openPomodoroSetup);
+    if (btnPomodoroReset) btnPomodoroReset.addEventListener('click', resetPomodoro);
+    if (btnClosePomodoroModal) btnClosePomodoroModal.addEventListener('click', closePomodoroSetup);
+    if (pomodoroModalBackdrop) pomodoroModalBackdrop.addEventListener('click', closePomodoroSetup);
+    if (btnStartPomodoroWithSetup) btnStartPomodoroWithSetup.addEventListener('click', savePomodoroSetupAndStart);
+    if (btnPomodoroAlertNext) {
+      btnPomodoroAlertNext.addEventListener('click', () => {
+        stopPomodoroAlert();
+        togglePomodoro();
+      });
+    }
+    if (btnPomodoroAlertDismiss) btnPomodoroAlertDismiss.addEventListener('click', stopPomodoroAlert);
+
+    // Pomodoro Hazır Şablonlar
+    document.querySelectorAll('.pomodoro-template-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const w = parseInt(btn.dataset.work, 10) || 25;
+        const b = parseInt(btn.dataset.break, 10) || 5;
+        pomodoroInputWork.value = w;
+        pomodoroInputBreak.value = b;
+        syncPomodoroModalButtons(w, b);
+      });
+    });
+
+    // Pomodoro Mini Pill Butonları
+    document.querySelectorAll('.mini-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const targetId = pill.dataset.target;
+        const val = parseInt(pill.dataset.val, 10);
+        const input = document.getElementById(targetId);
+        if (input && !isNaN(val)) {
+          input.value = val;
+          const curW = parseInt(pomodoroInputWork.value, 10) || 25;
+          const curB = parseInt(pomodoroInputBreak.value, 10) || 5;
+          syncPomodoroModalButtons(curW, curB);
+        }
+      });
+    });
+
+    // Pomodoro Yatay Spin Butonları (+ / -)
+    document.querySelectorAll('.spin-btn-h').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.target;
+        const input = document.getElementById(targetId);
+        if (!input) return;
+        const isUp = btn.classList.contains('spin-up');
+        const min = parseInt(input.min, 10) || 1;
+        const max = parseInt(input.max, 10) || 180;
+        const step = targetId === 'pomodoroInputWork' ? 5 : 1;
+        let val = (parseInt(input.value, 10) || (targetId === 'pomodoroInputWork' ? 25 : 5)) + (isUp ? step : -step);
+        if (val < min) val = min;
+        if (val > max) val = max;
+        input.value = val;
+        const curW = parseInt(pomodoroInputWork.value, 10) || 25;
+        const curB = parseInt(pomodoroInputBreak.value, 10) || 5;
+        syncPomodoroModalButtons(curW, curB);
+      });
+    });
+
+    if (pomodoroInputWork) {
+      pomodoroInputWork.addEventListener('input', () => {
+        const curW = parseInt(pomodoroInputWork.value, 10) || 25;
+        const curB = parseInt(pomodoroInputBreak.value, 10) || 5;
+        syncPomodoroModalButtons(curW, curB);
+      });
+    }
+
+    if (pomodoroInputBreak) {
+      pomodoroInputBreak.addEventListener('input', () => {
+        const curW = parseInt(pomodoroInputWork.value, 10) || 25;
+        const curB = parseInt(pomodoroInputBreak.value, 10) || 5;
+        syncPomodoroModalButtons(curW, curB);
+      });
+    }
 
     // Zamanlayıcı Hızlı Preset Butonları
     if (timerPresets) {
@@ -1156,14 +1572,22 @@
       } else if (key === '3') {
         e.preventDefault();
         setMode('timer');
+      } else if (key === '4') {
+        e.preventDefault();
+        setMode('pomodoro');
       } else if (key === ' ' || e.code === 'Space') {
         e.preventDefault();
         if (!timerAlarmOverlay.classList.contains('hidden')) {
           stopAlarm();
+        } else if (!pomodoroAlertOverlay.classList.contains('hidden')) {
+          stopPomodoroAlert();
+          togglePomodoro();
         } else if (currentMode === 'stopwatch') {
           toggleStopwatch();
         } else if (currentMode === 'timer') {
           toggleTimer();
+        } else if (currentMode === 'pomodoro') {
+          togglePomodoro();
         } else {
           toggleSettingsModal();
         }
@@ -1174,17 +1598,32 @@
         } else if (currentMode === 'timer') {
           e.preventDefault();
           resetTimer();
+        } else if (currentMode === 'pomodoro') {
+          e.preventDefault();
+          resetPomodoro();
         }
       } else if (key === 'l' && currentMode === 'stopwatch') {
         e.preventDefault();
         addStopwatchLap();
-      } else if (key === 'a' && currentMode === 'timer') {
-        e.preventDefault();
-        openTimerSetup();
+      } else if (key === 'a') {
+        if (currentMode === 'timer') {
+          e.preventDefault();
+          openTimerSetup();
+        } else if (currentMode === 'pomodoro') {
+          e.preventDefault();
+          openPomodoroSetup();
+        }
       } else if (key === 'enter') {
         if (!timerAlarmOverlay.classList.contains('hidden')) {
           e.preventDefault();
           stopAlarm();
+        } else if (!pomodoroAlertOverlay.classList.contains('hidden')) {
+          e.preventDefault();
+          stopPomodoroAlert();
+          togglePomodoro();
+        } else if (pomodoroModal.classList.contains('active')) {
+          e.preventDefault();
+          savePomodoroSetupAndStart();
         }
       } else if (key === 'f') {
         e.preventDefault();
@@ -1200,6 +1639,9 @@
           state.showSeconds = !state.showSeconds;
           saveSettings();
           applyState();
+        } else if (currentMode === 'pomodoro') {
+          e.preventDefault();
+          skipPomodoroPhase();
         }
       } else if (key === 'd') {
         e.preventDefault();
@@ -1248,6 +1690,10 @@
       } else if (key === 'escape') {
         if (!timerAlarmOverlay.classList.contains('hidden')) {
           stopAlarm();
+        } else if (!pomodoroAlertOverlay.classList.contains('hidden')) {
+          stopPomodoroAlert();
+        } else if (pomodoroModal.classList.contains('active')) {
+          closePomodoroSetup();
         } else if (timerModal.classList.contains('active')) {
           closeTimerSetup();
         } else if (settingsPanel.classList.contains('active')) {
@@ -1259,7 +1705,7 @@
     // Mobil/Tablet için çift dokunuşla tam ekran (Double-tap fullscreen)
     let lastTouchEnd = 0;
     document.addEventListener('touchend', (e) => {
-      if (e.target.closest('button, input, .settings-panel, .timer-modal, .laps-container, .mode-navigation, .floating-controls')) return;
+      if (e.target.closest('button, input, .settings-panel, .timer-modal, .pomodoro-modal, .laps-container, .mode-navigation, .floating-controls')) return;
       const nowTime = Date.now();
       if (nowTime - lastTouchEnd < 320) {
         e.preventDefault();
@@ -1304,6 +1750,15 @@
             updateTimerDisplay();
           }
         }
+      } else if (currentMode === 'pomodoro') {
+        if (pomodoroRunning) {
+          const remaining = Math.max(0, Math.ceil((pomodoroEndTime - performance.now()) / 1000));
+          if (remaining <= 0) {
+            triggerPomodoroTransition();
+          } else {
+            updatePomodoroDisplay();
+          }
+        }
       }
 
       // Arka planda çalışan zamanlayıcı kontrolü
@@ -1311,6 +1766,14 @@
         const remaining = Math.max(0, Math.ceil((timerEndTime - performance.now()) / 1000));
         if (remaining <= 0) {
           triggerAlarm();
+        }
+      }
+
+      // Arka planda çalışan Pomodoro kontrolü
+      if (currentMode !== 'pomodoro' && pomodoroRunning) {
+        const remaining = Math.max(0, Math.ceil((pomodoroEndTime - performance.now()) / 1000));
+        if (remaining <= 0) {
+          triggerPomodoroTransition();
         }
       }
     }, 200);

@@ -42,6 +42,12 @@
       </svg>
       <span>Zamanlayıcı</span>
     </button>
+    <button type="button" class="mode-nav-btn" data-mode="pomodoro" id="modeBtnPomodoro" title="Pomodoro Modu (4)">
+      <svg class="mode-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+      </svg>
+      <span>Pomodoro</span>
+    </button>
   </nav>
 
   <!-- Ana Saat Sahnesi -->
@@ -164,6 +170,41 @@
           <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
           <span class="btn-text">Sıfırla</span>
         </button>
+      </div>
+
+      <!-- Pomodoro Kontrolleri -->
+      <div class="action-group pomodoro-controls hidden" id="pomodoroControls">
+        <button type="button" class="action-btn btn-primary" id="btnPomodoroToggle">
+          <svg class="action-icon icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="action-icon icon-pause hidden" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          <span class="btn-text" id="pomodoroToggleText">Başlat</span>
+        </button>
+        <button type="button" class="action-btn" id="btnPomodoroSkip" title="Aşama Değiştir (S)">
+          <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          <span class="btn-text" id="pomodoroSkipText">Molaya Geç</span>
+        </button>
+        <button type="button" class="action-btn" id="btnOpenPomodoroSetup" title="Süreleri Ayarla (A)">
+          <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          <span class="btn-text">Süreleri Ayarla</span>
+        </button>
+        <button type="button" class="action-btn btn-secondary" id="btnPomodoroReset" title="Sıfırla (R)">
+          <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          <span class="btn-text">Sıfırla</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pomodoro Durum ve Seans Takipçisi -->
+    <div class="pomodoro-tracker hidden" id="pomodoroTracker">
+      <div class="pomodoro-badge badge-work" id="pomodoroBadge">🎯 DERS ZAMANI</div>
+      <div class="pomodoro-stats">
+        <span class="pomodoro-cycle-text" id="pomodoroCycleText">Pomodoro #1</span>
+        <div class="pomodoro-dots" id="pomodoroDots" title="4 Seanslık Döngü">
+          <span class="dot current"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
       </div>
     </div>
 
@@ -376,14 +417,15 @@
       <div class="setting-group shortcuts-info">
         <label class="setting-label">Klavye Kısayolları</label>
         <ul class="shortcuts-list">
-          <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> Mod Değiştir</li>
+          <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> Mod Değiştir (Saat / Kronometre / Timer / Pomodoro)</li>
           <li><kbd>Space</kbd> Başlat / Duraklat</li>
           <li><kbd>R</kbd> Sıfırla</li>
+          <li><kbd>S</kbd> Aşama Atla (Pomodoro) / Saniye Aç-Kapat (Saat)</li>
           <li><kbd>L</kbd> Tur Ekle (Kronometre)</li>
-          <li><kbd>A</kbd> Süre Belirle (Zamanlayıcı)</li>
+          <li><kbd>A</kbd> Süre Belirle (Timer / Pomodoro)</li>
           <li><kbd>F</kbd> Tam Ekran</li>
+          <li><kbd>W</kbd> Ekranı Açık Tut (Wake Lock)</li>
           <li><kbd>T</kbd> 12 / 24 Saat</li>
-          <li><kbd>S</kbd> Saniye Aç/Kapat</li>
           <li><kbd>D</kbd> Temayı Değiştir</li>
           <li><kbd>O</kbd> Fontu Değiştir</li>
           <li><kbd>M</kbd> Sesi Aç/Kapat</li>
@@ -454,6 +496,91 @@
       <h3 class="alarm-title">Süre Doldu!</h3>
       <p class="alarm-desc" id="alarmDetail">Zamanlayıcı tamamlandı.</p>
       <button type="button" class="action-btn btn-primary" id="btnStopAlarm">Tamam (Kapat)</button>
+    </div>
+  </div>
+
+  <!-- Pomodoro Kurma Modalı -->
+  <div class="settings-modal-backdrop" id="pomodoroModalBackdrop"></div>
+  <section class="settings-panel pomodoro-modal" id="pomodoroModal" aria-labelledby="pomodoroModalHeading">
+    <div class="settings-header">
+      <h2 id="pomodoroModalHeading">🍅 Pomodoro Sürelerini Ayarla</h2>
+      <button class="close-btn" id="btnClosePomodoroModal" aria-label="Kapat">&times;</button>
+    </div>
+    <div class="settings-body pomodoro-modal-body">
+      <!-- Hızlı Hazır Şablonlar -->
+      <div class="pomodoro-preset-templates">
+        <span class="setting-desc">Önerilen Seans Şablonları:</span>
+        <div class="modal-presets-pills">
+          <button type="button" class="pomodoro-template-btn active" data-work="25" data-break="5">⚡ 25 dk Ders / 5 dk Mola</button>
+          <button type="button" class="pomodoro-template-btn" data-work="50" data-break="10">🎯 50 dk Ders / 10 dk Mola</button>
+          <button type="button" class="pomodoro-template-btn" data-work="45" data-break="15">📚 45 dk Ders / 15 dk Mola</button>
+        </div>
+      </div>
+
+      <div class="pomodoro-dual-inputs">
+        <!-- Ders / Çalışma Süresi -->
+        <div class="pomodoro-input-card">
+          <div class="input-card-header">
+            <span class="card-icon">📚</span>
+            <label for="pomodoroInputWork">Ders / Çalışma</label>
+          </div>
+          <div class="spin-box-horizontal">
+            <button type="button" class="spin-btn-h spin-down" data-target="pomodoroInputWork">-</button>
+            <div class="input-with-unit">
+              <input type="number" id="pomodoroInputWork" min="1" max="180" value="25" class="pomodoro-num-input">
+              <span class="unit-label">dk</span>
+            </div>
+            <button type="button" class="spin-btn-h spin-up" data-target="pomodoroInputWork">+</button>
+          </div>
+          <div class="quick-pills">
+            <button type="button" class="mini-pill" data-target="pomodoroInputWork" data-val="15">15 dk</button>
+            <button type="button" class="mini-pill active" data-target="pomodoroInputWork" data-val="25">25 dk</button>
+            <button type="button" class="mini-pill" data-target="pomodoroInputWork" data-val="45">45 dk</button>
+            <button type="button" class="mini-pill" data-target="pomodoroInputWork" data-val="50">50 dk</button>
+          </div>
+        </div>
+
+        <!-- Mola Süresi -->
+        <div class="pomodoro-input-card">
+          <div class="input-card-header">
+            <span class="card-icon">☕</span>
+            <label for="pomodoroInputBreak">Mola Süresi</label>
+          </div>
+          <div class="spin-box-horizontal">
+            <button type="button" class="spin-btn-h spin-down" data-target="pomodoroInputBreak">-</button>
+            <div class="input-with-unit">
+              <input type="number" id="pomodoroInputBreak" min="1" max="60" value="5" class="pomodoro-num-input">
+              <span class="unit-label">dk</span>
+            </div>
+            <button type="button" class="spin-btn-h spin-up" data-target="pomodoroInputBreak">+</button>
+          </div>
+          <div class="quick-pills">
+            <button type="button" class="mini-pill" data-target="pomodoroInputBreak" data-val="3">3 dk</button>
+            <button type="button" class="mini-pill active" data-target="pomodoroInputBreak" data-val="5">5 dk</button>
+            <button type="button" class="mini-pill" data-target="pomodoroInputBreak" data-val="10">10 dk</button>
+            <button type="button" class="mini-pill" data-target="pomodoroInputBreak" data-val="15">15 dk</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 18px;">
+        <button type="button" class="btn-primary modal-action-btn" id="btnStartPomodoroWithSetup">
+          🚀 Odaklanmaya Başla
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pomodoro Aşama Bildirimi / Overlay -->
+  <div class="timer-alarm-overlay hidden" id="pomodoroAlertOverlay" role="dialog" aria-modal="true" aria-label="Pomodoro Bildirimi">
+    <div class="timer-alarm-card pomodoro-alert-card">
+      <div class="alarm-bell-icon" id="pomodoroAlertIcon" aria-hidden="true">🎉</div>
+      <h3 class="alarm-title" id="pomodoroAlertTitle">Ders Süresi Tamamlandı!</h3>
+      <p class="alarm-desc" id="pomodoroAlertDesc">Harika iş! Şimdi 5 dakikalık mola zamanı.</p>
+      <div class="pomodoro-alert-actions">
+        <button type="button" class="action-btn btn-primary" id="btnPomodoroAlertNext">Molayı Başlat</button>
+        <button type="button" class="action-btn btn-secondary" id="btnPomodoroAlertDismiss">Kapat</button>
+      </div>
     </div>
   </div>
 
