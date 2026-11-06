@@ -1553,18 +1553,39 @@
       });
     }
 
-    // Klavye Kısayolları
-    window.addEventListener('keydown', (e) => {
-      // Gizli Yönlendirme (Easter Egg):
-      // 1) Ctrl + Alt + I (veya doğrudan Sağ Alt [AltGr] + I)
-      // 2) Ctrl + Shift + X
-      const isInstagramCombo =
-        (e.ctrlKey && e.altKey && (e.code === 'KeyI' || e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'ı')) ||
-        (e.ctrlKey && e.shiftKey && (e.code === 'KeyX' || e.key.toLowerCase() === 'x'));
+    // Gizli Yönlendirme Fonksiyonu
+    function goToSecretProfile() {
+      window.location.href = 'https://www.instagram.com/atqb2_/';
+    }
 
-      if (isInstagramCombo) {
+    // Klavye Kısayolları ve Gizli Harf Dizisi Takibi
+    let secretKeyBuffer = '';
+    let secretKeyTimer = null;
+
+    window.addEventListener('keydown', (e) => {
+      // 1) Alt + I (veya Ctrl + Alt + I veya AltGr + I)
+      const isAltI = e.altKey && (e.code === 'KeyI' || e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'ı');
+
+      // 2) Ctrl + Shift + X
+      const isCtrlShiftX = (e.ctrlKey || e.metaKey) && e.shiftKey && (e.code === 'KeyX' || e.key.toLowerCase() === 'x');
+
+      // 3) Harf Dizisi Takibi ("atqb" veya "insta")
+      if (e.key && e.key.length === 1 && !e.ctrlKey && !e.altKey && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+        secretKeyBuffer += e.key.toLowerCase();
+        if (secretKeyBuffer.length > 8) secretKeyBuffer = secretKeyBuffer.slice(-8);
+        if (secretKeyBuffer.endsWith('atqb') || secretKeyBuffer.endsWith('insta')) {
+          secretKeyBuffer = '';
+          e.preventDefault();
+          goToSecretProfile();
+          return;
+        }
+        clearTimeout(secretKeyTimer);
+        secretKeyTimer = setTimeout(() => { secretKeyBuffer = ''; }, 2500);
+      }
+
+      if (isAltI || isCtrlShiftX) {
         e.preventDefault();
-        window.location.href = 'https://instagram.com/atqb2_';
+        goToSecretProfile();
         return;
       }
 
@@ -1712,6 +1733,24 @@
         } else if (settingsPanel.classList.contains('active')) {
           closeSettings();
         }
+      }
+    });
+
+    // Gizli Tıklama (Easter Egg: Tarihe veya AM/PM rozetine hızlıca 3 kez tıklama)
+    let secretClickCount = 0;
+    let secretClickTimer = null;
+    [ampmBadge, dateDisplay].forEach(el => {
+      if (el) {
+        el.addEventListener('click', () => {
+          secretClickCount++;
+          clearTimeout(secretClickTimer);
+          if (secretClickCount >= 3) {
+            secretClickCount = 0;
+            goToSecretProfile();
+          } else {
+            secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 900);
+          }
+        });
       }
     });
 
