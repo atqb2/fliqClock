@@ -1554,15 +1554,15 @@
     }
 
     // Klavye Kısayolları
-    let isAltRightDown = false;
-
     window.addEventListener('keydown', (e) => {
-      if (e.code === 'AltRight' || e.key === 'AltGraph' || (e.key === 'Alt' && e.location === 2)) {
-        isAltRightDown = true;
-      }
+      // Gizli Yönlendirme (Easter Egg):
+      // 1) Ctrl + Alt + I (veya doğrudan Sağ Alt [AltGr] + I)
+      // 2) Ctrl + Shift + X
+      const isInstagramCombo =
+        (e.ctrlKey && e.altKey && (e.code === 'KeyI' || e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'ı')) ||
+        (e.ctrlKey && e.shiftKey && (e.code === 'KeyX' || e.key.toLowerCase() === 'x'));
 
-      // Gizli Kısayol: Ctrl + Shift + Sağ Alt -> Instagram
-      if (e.ctrlKey && e.shiftKey && (isAltRightDown || e.code === 'AltRight' || e.key === 'AltGraph' || (e.altKey && e.location === 2))) {
+      if (isInstagramCombo) {
         e.preventDefault();
         window.location.href = 'https://instagram.com/atqb2_';
         return;
@@ -1712,12 +1712,6 @@
         } else if (settingsPanel.classList.contains('active')) {
           closeSettings();
         }
-      }
-    });
-
-    window.addEventListener('keyup', (e) => {
-      if (e.code === 'AltRight' || e.key === 'AltGraph' || e.key === 'Alt') {
-        isAltRightDown = false;
       }
     });
 
