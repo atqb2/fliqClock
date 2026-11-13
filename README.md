@@ -1,4 +1,4 @@
-# fliqClock - Modern Web Flip Clock 🕰️
+# fliqClock - Modern Web Flip Clock 
 
 Dünyaca ünlü yaprak saat (flip clock) ekran koruyucusu tasarımının modern web teknolojileri (HTML5, CSS 3D Transforms, Vanilla JS) ile geliştirilmiş; telefon, tablet ve masaüstü uyumlu, PWA destekli sürümü.
 
@@ -6,31 +6,31 @@ Dünyaca ünlü yaprak saat (flip clock) ekran koruyucusu tasarımının modern 
 
 ---
 
-## 🌟 Özellikler
+##  Özellikler
 
 - 🕒 **4 Farklı Çalışma Modu**:
   - **Saat (Clock)**: 12s / 24s formatı, AM/PM rozeti, Türkçe tarih gösterimi
   - **Kronometre (Stopwatch)**: Saat, dakika, saniye ileri sayım; Başlat/Durdur/Sıfırla ve Tur (Lap) kaydetme listesi
   - **Zamanlayıcı (Timer)**: Saat, dakika, saniye geri sayım; 1dk - 60dk hızlı hazır süreler, özel süre kurma modalı ve süre dolduğunda Web Audio polifonik alarm
-  - **🍅 Pomodoro (Odaklanma Modu)**: Ders çalışma ve mola sürelerini belirleme; seans takibi (4'lü seans döngü göstergesi), otomatik veya tek tıkla aşama geçişi, sesli uyarılar ve süre dolduğunda özel motivasyon bildirimleri
-- 📱 **Telefon & Tablet Tam Uyumluluğu (Responsive & Dock Modu)**:
+  - ** Pomodoro (Odaklanma Modu)**: Ders çalışma ve mola sürelerini belirleme; seans takibi (4'lü seans döngü göstergesi), otomatik veya tek tıkla aşama geçişi, sesli uyarılar ve süre dolduğunda özel motivasyon bildirimleri
+-  **Telefon & Tablet Tam Uyumluluğu (Responsive & Dock Modu)**:
   - **Yatay Masa / Komodin Saati**: Telefonu veya tableti şarja takıp yatay koyduğunuzda kartlar ekran yüksekliğine göre otomatik orantılanır.
   - **Dikey Görünüm**: 2 kart veya 3 kart (saniye açıkken) ekrandan asla taşmaz (`nowrap`), alt satıra kaymaz.
   - **Çentik ve Dinamik Ada Uyumu**: iPhone ve modern tabletlerde `safe-area-inset` ile kontroller çentiğin altında kalmaz.
   - **Çift Dokunuş Tam Ekran**: Ekrana çift dokunarak anında tam ekran moduna geçiş.
-- 💡 **Ekranı Açık Tutma (Screen Wake Lock API)**:
+-  **Ekranı Açık Tutma (Screen Wake Lock API)**:
   - Telefon veya tabletiniz masa saati olarak açıkken ekranın kendi kendine kapanmasını/kilitlenmesini engeller. Tek tıkla (veya `W` tuşuyla) açılıp kapatılabilir.
-- 📲 **PWA Desteği (Ana Ekrana Ekle - Uygulama Gibi Kullan)**:
+-  **PWA Desteği (Ana Ekrana Ekle - Uygulama Gibi Kullan)**:
   - `manifest.json` ve özel simgesiyle Safari / Chrome üzerinden "Ana Ekrana Ekle" diyerek tam ekran bağımsız bir uygulama gibi çalıştırabilirsiniz.
-- ⏱️ **3D Mekanik Flip Animasyonu**: Gerçekçi kart dönüşü, ışık ve gölge geçişleri, menteşe ve orta kesim çizgisi detayları.
-- ⚡ **Saniye Kartı (Opsiyonel / Mod Duyarlı)**: Saat modunda açılıp kapatılabilir; kronometre ve zamanlayıcıda tam hassasiyetle aktif.
-- 🎨 **5 Farklı Tema**:
+-  **3D Mekanik Flip Animasyonu**: Gerçekçi kart dönüşü, ışık ve gölge geçişleri, menteşe ve orta kesim çizgisi detayları.
+-  **Saniye Kartı (Opsiyonel / Mod Duyarlı)**: Saat modunda açılıp kapatılabilir; kronometre ve zamanlayıcıda tam hassasiyetle aktif.
+-  **5 Farklı Tema**:
   - **Fliqlo Siyah** (Orijinal derin siyah)
   - **Minimal Beyaz** (Modern aydınlık tema)
   - **Retro Amber** (Sıcak turuncu/kehribar vintage görünüm)
   - **Matrix Neon** (Siber yeşil fosforlu)
   - **Nord Kutup** (Zarif soğuk kutup mavisi)
-- 🔤 **8 Farklı Yazı Tipi (Font)**:
+-  **8 Farklı Yazı Tipi (Font)**:
   - **Inter**: Orijinal Fliqlo tarzı, net ve minimalist
   - **Bebas Neue**: Klasik havalimanı split-flap tabelası
   - **Oswald**: Güçlü ve kondanse endüstriyel
@@ -39,14 +39,14 @@ Dünyaca ünlü yaprak saat (flip clock) ekran koruyucusu tasarımının modern 
   - **Playfair Display**: Lüks ve klasik serif
   - **Space Grotesk**: Modern ve geometrik
   - **Syne**: Cesur ve sanatsal
-- 🔊 **Mekanik Ses Efekti & Alarm**: Web Audio API ile sıfır harici dosya bağımlılığıyla üretilen gerçekçi yaprak klik sesi ve zamanlayıcı alarm melodisi.
-- 🖥️ **Ekran Koruyucu (Screensaver) Deneyimi**: Fare veya dokunma 3 saniye hareketsiz kaldığında kontroller ve imleç otomatik gizlenir.
-- 📐 **Boyutlandırma**: %50 ile %160 arasında ölçeklendirme.
-- 💾 **Kalıcı Ayarlar**: Seçimleriniz tarayıcı hafızasında (`localStorage`) saklanır.
+-  **Mekanik Ses Efekti & Alarm**: Web Audio API ile sıfır harici dosya bağımlılığıyla üretilen gerçekçi yaprak klik sesi ve zamanlayıcı alarm melodisi.
+-  **Ekran Koruyucu (Screensaver) Deneyimi**: Fare veya dokunma 3 saniye hareketsiz kaldığında kontroller ve imleç otomatik gizlenir.
+-  **Boyutlandırma**: %50 ile %160 arasında ölçeklendirme.
+-  **Kalıcı Ayarlar**: Seçimleriniz tarayıcı hafızasında (`localStorage`) saklanır.
 
 ---
 
-## ⌨️ Klavye Kısayolları
+##  Klavye Kısayolları
 
 | Tuş | İşlev |
 | :--- | :--- |
@@ -71,7 +71,7 @@ Dünyaca ünlü yaprak saat (flip clock) ekran koruyucusu tasarımının modern 
 
 ---
 
-## 🌐 GitHub Pages ile %100 ÜCRETSİZ Yayında
+##  GitHub Pages ile %100 ÜCRETSİZ Yayında
 
 Projeniz GitHub Pages ile barındırılmaktadır ve sonsuza kadar ücretsizdir.
 
@@ -80,7 +80,7 @@ Projeniz GitHub Pages ile barındırılmaktadır ve sonsuza kadar ücretsizdir.
 
 ---
 
-## 📱 Telefonda / Tablette "Uygulama" Olarak Kullanma
+##  Telefonda / Tablette "Uygulama" Olarak Kullanma
 
 - **iPhone / iPad (iOS Safari)**:
   - Sitenin linkini Safari'de açın: `https://atqb2.github.io/fliqClock/`
